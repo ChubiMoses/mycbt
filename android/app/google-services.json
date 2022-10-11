@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "996516312046",
+    "firebase_url": "https://cbt-exams-bc05c.firebaseio.com",
+    "project_id": "cbt-exams-bc05c",
+    "storage_bucket": "cbt-exams-bc05c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996516312046:android:d5c8973d4f0a46da1114ff",
+        "android_client_info": {
+          "package_name": "com.cc.MyCBT"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996516312046-nier3nf7qnbgruoul65idr420f3gih8v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYBBbJRqNPdkj-BaQuUdZFsAwzTd-0QcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996516312046-nier3nf7qnbgruoul65idr420f3gih8v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996516312046:android:51cd6a6e970eb1ae1114ff",
+        "android_client_info": {
+          "package_name": "com.cc.cbt_exams"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996516312046-deoluqbahiemb04u1se027qdt42kn7su.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cc.cbt_exams",
+            "certificate_hash": "53280bbc2a5b4e907923e133502ffd23ea96c78d"
+          }
+        },
+        {
+          "client_id": "996516312046-nier3nf7qnbgruoul65idr420f3gih8v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYBBbJRqNPdkj-BaQuUdZFsAwzTd-0QcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996516312046-nier3nf7qnbgruoul65idr420f3gih8v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
