@@ -3,21 +3,19 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mycbt/src/models/doc.dart';
 import 'package:mycbt/src/models/docs.dart';
 import 'package:mycbt/src/models/question.dart';
-import 'package:mycbt/src/screen/documents/pdf_upload.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
-import 'package:mycbt/src/screen/question/questions_tile.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
+import 'package:mycbt/src/screen/web/components/question_slide.dart';
 import 'package:mycbt/src/services/ads_service.dart';
 import 'package:mycbt/src/services/courses_service.dart';
 import 'package:mycbt/src/services/question_service.dart';
 import 'package:mycbt/src/services/user_online_checker.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/widgets/ProgressWidget.dart';
-import 'package:mycbt/src/widgets/pdf%20widgets/downloaded_pdf_gridview.dart';
 import 'package:mycbt/src/widgets/pdf%20widgets/pdf_gridview_tile.dart';
 
 class HomeView extends StatefulWidget {
   final VoidCallback goto;
-  const HomeView(this.goto);
+  const HomeView(this.goto, {Key? key}) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
@@ -36,13 +34,12 @@ class _HomeViewState extends State<HomeView> {
   bool docLoading = true;
   bool visible = true;
   List category = [
-    "STUDY MATERIALS",
+    "MATERIALS",
     "CBT EXAMS",
     "ToDo",
     "CGPA CALCULATOR",
   ];
   List<DocsModel> downloads = [];
-  TabController? _tabController;
   ScrollController scrollController = ScrollController();
   List<DocModel> pdf = [];
   List<DocModel> pastQuestions = [];
@@ -108,7 +105,6 @@ class _HomeViewState extends State<HomeView> {
       downloads = [];
     });
     courses = await getCoursesList(context);
-    downloads = await fetchDownloads();
     setState(() {
       downloads = downloads;
       for (var element in courses) {
@@ -171,119 +167,43 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: isLoading ? kWhite : kBgScaffold,
+      backgroundColor: kBgScaffold,
       body: SingleChildScrollView(
         physics:const BouncingScrollPhysics(),
         child: isLoading
-            ? loader()
+            ? Padding(
+              padding: const EdgeInsets.only(top: 100),
+              child: loader(),
+            )
             : Column(
                 children: [
                   const SizedBox(height: 5),
                   Column(
                     children: [
-                      downloads.isEmpty
-                          ? const SizedBox.shrink()
-                          : DownloadedGridTile(
-                              downloads, "Downloads", getCourses),
-                      SizedBox(
-                        height: 8,
-                      ),
                       PDFGridviewTile(
                           lectureNotes, "Lecture notes", getCourses),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       PDFGridviewTile(
                           pastQuestions, "Past Questions", getCourses),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       PDFGridviewTile(practical, "Practicals", getCourses),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       PDFGridviewTile(projects, "Projects", getCourses),
                     ],
                   ),
-                  questions.isEmpty 
-                      ? const SizedBox.shrink()
-                      : Column(children: [
-                          adReady
-                              ? SizedBox(
-                                  height: _bannerAd.size.height.toDouble(),
-                                  width: _bannerAd.size.width.toDouble(),
-                                  child: AdWidget(ad: _bannerAd),
-                                )
-                              : const SizedBox.shrink(),
-                          const SizedBox(
-                            height: 2,
-                          ),
-                          Container(
-                            constraints: const BoxConstraints(
-                                minHeight: 260, maxHeight: 310),
-                            child: ListView.separated(
-                              itemCount:
-                                  questions.length >= 6 ? 6 : questions.length,
-                              shrinkWrap: true,
-                              padding: const EdgeInsets.all(0),
-                              scrollDirection: Axis.horizontal,
-                              separatorBuilder: (context, i) {
-                                if (i == 1) {
-                                  return adReady
-                                      ? SizedBox(
-                                          height: 260,
-                                          width: 300,
-                                          child: AdWidget(ad: _bannerAd2),
-                                        )
-                                      : const SizedBox.shrink();
-                                }
 
-                                return const SizedBox.shrink();
-                              },
-                              itemBuilder: (BuildContext context, int i) {
-                                return Container(
-                                    width: 300,
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: kWhite,
-                                    ),
-                                    child: QuestionTile(
-                                      dislikeIds: questions[i].dislikeIds,
-                                      likeIds: questions[i].likeIds,
-                                      title: questions[i].title,
-                                      id: questions[i].id,
-                                      question: questions[i].question,
-                                      image: questions[i].image,
-                                      answers: questions[i].answers,
-                                      view: "homescreen",
-                                      timestamp: questions[i].timestamp,
-                                      profileImage: questions[i].profileImage,
-                                      userId: questions[i].userId,
-                                      username: questions[i].username,
-                                    ));
-                              },
-                            ),
-                          ),
-                          // MoreCard(
-                          //   title: "RECENT QUESTIONS",
-                          //   press: () => widget.goto(),
-                          // ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ])
+                  const QuestileTile()
+                 
                 ],
               ),
       ),
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => PDFUploadScreen())),
-          child: const Icon(Icons.cloud_upload)),
+    
     );
   }
 }

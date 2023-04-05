@@ -2,11 +2,13 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:mycbt/src/models/referral.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
+import 'package:mycbt/src/screen/admin/approve_sub.dart';
+import 'package:mycbt/src/screen/admin/cancel_sub.dart';
 import 'package:mycbt/src/screen/referal/payment_info.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:mycbt/src/screen/home_tab.dart';
+import 'package:mycbt/src/utils/list.dart';
 import 'package:mycbt/src/utils/network_utils.dart';
 import 'package:mycbt/src/widgets/ProgressWidget.dart';
 import 'package:mycbt/src/widgets/displayToast.dart';
@@ -82,10 +84,15 @@ class _ActivateMyAppState extends State<ReferralProgram> {
       backgroundColor: kBgScaffold,
       appBar: AppBar(
         elevation: 0,
-        title: Text(
+        title: const Text(
           "Refer & Earn",
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
+        actions: !admin.contains(currentUser!.email) ? null :[
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>  CancelSubscription()));
+          }, icon: const Icon(Icons.lock))
+        ] 
       ),
       body: isLoading
           ? loader()
@@ -101,12 +108,12 @@ class _ActivateMyAppState extends State<ReferralProgram> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("\u{20A6}" + formatter.format(referrer?.balance),
-                            style: TextStyle(
+                        Text("\u{20A6}${formatter.format(referrer?.balance)}",
+                            style: const TextStyle(
                                 fontSize: 35.0,
                                 color: kWhite,
                                 fontWeight: FontWeight.bold)),
-                        Text("EARNINGS",
+                        const Text("EARNINGS",
                             style: TextStyle(
                                 fontSize: 12.0,
                                 color: kWhite,
@@ -116,7 +123,7 @@ class _ActivateMyAppState extends State<ReferralProgram> {
                           onTap: !pending
                               ? () => placeWithrawal()
                               : () {
-                                  SnackBar snackBar = SnackBar(
+                                  SnackBar snackBar = const SnackBar(
                                       content: Text("Withdrawal pending..."));
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(snackBar);
@@ -124,17 +131,17 @@ class _ActivateMyAppState extends State<ReferralProgram> {
                           child: Container(
                             height: 30,
                             width: 100,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: kWhite),
+                                borderRadius: BorderRadius.circular(5)),
                             child: Center(
                                     child: Text( pending
                                 ? "PENDING" :  "WITHDRAW" ,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             color: kWhite,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 12.0)),
                                   ),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: kWhite),
-                                borderRadius: BorderRadius.circular(5)),
                           ),
                         ),
                       ],

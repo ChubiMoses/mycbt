@@ -1,7 +1,5 @@
 import 'package:mycbt/src/utils/firebase_collections.dart';
-import 'package:mycbt/src/models/subscription.dart';
 import 'package:device_info/device_info.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<bool> activationChecker(

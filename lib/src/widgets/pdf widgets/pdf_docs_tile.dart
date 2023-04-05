@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/modal/pdf_render_modal.dart';
+import 'package:mycbt/src/screen/web/widgets/custom_image.dart';
+import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/utils/network_utils.dart';
 import 'package:mycbt/src/widgets/displayToast.dart';
 
 // ignore: must_be_immutable
 class PDFDocTile extends StatelessWidget {
-  PDFDocTile(
+  const PDFDocTile(
       {Key? key,
-      required this.title,
-      required this.pages,
-      required this.readProgress,
-      required this.code,
-      required this.url,
-      required this.id,
-      required this.conversation,
-      required this.view,
-      required this.firebaseId,
-      required this.refresh})
-      : super(key: key);
+  required this.title,
+  required this.pages,
+  required this.readProgress,
+  required this.code,
+  required this.url,
+  required this.id,
+  required this.conversation,
+  required this.view,
+  required this.firebaseId,
+  required this.refresh})
+  : super(key: key);
   final VoidCallback refresh;
   final String title;
   final int readProgress;
@@ -30,119 +34,115 @@ class PDFDocTile extends StatelessWidget {
   final String view;
   final String firebaseId;
 
-  List<String> thumbnails = [
-    '1.png',
-    '2.png',
-    '3.png',
-    '4.png',
-    '5.png',
-    '6.png',
-    '7.png',
-    '8.png',
-  ];
-
   @override
   Widget build(BuildContext context) {
-    thumbnails.shuffle();
-    String thumbnail = thumbnails[1];
     double progress = readProgress.toDouble() / pages.toDouble();
-    return Material(
-      elevation: 0.0,
-      color: kWhite,
-      borderRadius: BorderRadius.circular(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 10),
-              height: 70,
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/thumbnail/$thumbnail"),
-                    fit: BoxFit.cover),
-              ),
-              child: Container(color: Colors.white70, child: SizedBox.shrink()),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
-              child: Text(code.toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    color: kBlack400,
-                    fontWeight: FontWeight.bold,
-                  )),
-            ),
-            SizedBox(
-              height: 27,
-              child: Padding(
-                 padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 5.0),
-                child: Text(title.toUpperCase(),
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 11.0,
-                        color: kBlack400,
-                        fontWeight: FontWeight.w600)),
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            GestureDetector(
-              onTap: () async {
-                final result = await checkConnetion();
-                if (view != "OfflinePDF" && result == 0) {
-                  displayToast("No internet connection");
-                } else {
-                  handleDocsRender(context,
-                      title: title,
-                      firebaseId: firebaseId,
-                      conversation: conversation,
-                      id: id,
-                      progress: 0,
-                      preview: false,
-                      code: code,
-                      view: view,
-                      refresh: refresh,
-                      filePath: url);
-                }
-              },
-              child: Container(
-                width: 60,
-                height: 20,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Theme.of(context).primaryColor,
-                ),
-                child: Center(
-                    child: Text(
-                  "READ",
-                  style: TextStyle(color: kWhite, fontSize: 10),
-                )),
-              ),
-            ),
-            SizedBox(
-              height: 7,
-            ),
-            view == "OfflinePDF"
-                ? Container(
-                    alignment: Alignment.bottomCenter,
-                    child: SizedBox(
-                      height: 5,
-                      child: LinearProgressIndicator(
-                        backgroundColor: kGrey200,
-                        value: readProgress == 0 ? 0.0 : progress,
-                        valueColor: AlwaysStoppedAnimation(
-                            Theme.of(context).primaryColor),
-                      ),
-                    ),
-                  )
-                : SizedBox.shrink()
+    return InkWell(
+      onTap:() async{
+         int result = 1;
+        if (ResponsiveHelper.isMobilePhone()) {
+            result = await checkConnetion();
+        }
+        if (currentUser == null) {
+          displayToast("Please login");
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const LoginRegisterPage()));
+        } else {
+          if (view != "OfflinePDF" && result == 0) {
+            displayToast("No internet connection");
+          } else {
+            // ignore: use_build_context_synchronously
+            handleDocsRender(context,
+                title: title,
+                firebaseId: firebaseId,
+                conversation: conversation,
+                id: id,
+                progress: 0,
+                preview: false,
+                code: code,
+                view: view,
+                refresh: refresh,
+                filePath: url);
+          }
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey[300]!,
+              spreadRadius: 1,
+              blurRadius: 5,
+            )
           ],
+          color: kWhite,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Row(
+            children: [
+              CustomImage(height: 100, image: '', width:ResponsiveHelper.isTab(context) ? 60 : 100,
+              ),
+              const SizedBox(width: 5),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                        width: ResponsiveHelper.isMobile(context) ? 200 : 200,
+                      child: Text(title.toUpperCase(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: const TextStyle(
+                            fontSize: 12.0,
+                            color: kBlack400,
+                            fontWeight: FontWeight.w600,
+                          )),
+                    ),
+                    Text(code.toUpperCase(),
+                        style: const TextStyle(
+                            fontSize: 11.0,
+                            color: Color(0xff5D5D5D),
+                            fontWeight: FontWeight.w600)),
+                    Container(
+                      width: 60,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      child: const Center(
+                          child: Text(
+                        "READ",
+                        style: TextStyle(color: kWhite, fontSize: 10),
+                      )),
+                    ),
+                    view == "OfflinePDF"
+                        ? Container(
+                          width:ResponsiveHelper.isDesktop(context) ? 100 : ResponsiveHelper.isTab(context) ? 100 : 210,
+                            alignment: Alignment.bottomCenter,
+                            child: SizedBox(
+                              height: 5,
+                              child: LinearProgressIndicator(
+                                backgroundColor: kGrey200,
+                                value: readProgress == 0 ? 0.0 : progress,
+                                valueColor: AlwaysStoppedAnimation(
+                                    Theme.of(context).primaryColor),
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink()
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

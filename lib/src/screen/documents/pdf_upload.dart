@@ -1,11 +1,8 @@
-
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mycbt/src/models/doc.dart';
 import 'package:mycbt/src/screen/admin/typing/add_courses.dart';
 import 'package:mycbt/src/screen/documents/pdf_view.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/services/file_service.dart';
 import 'package:mycbt/src/utils/colors.dart';
@@ -16,6 +13,8 @@ import 'package:uuid/uuid.dart';
 import 'package:file_picker/file_picker.dart';
 
 class PDFUploadScreen extends StatefulWidget {
+  const PDFUploadScreen({Key? key}) : super(key: key);
+
 
   @override
   _PDFUploadScreenState createState() => _PDFUploadScreenState();
@@ -51,7 +50,7 @@ class _PDFUploadScreenState extends State<PDFUploadScreen> {
       } else {
         
     FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowedExtensions: ['pdf',], type: FileType.custom);
+        .pickFiles(allowedExtensions: ['pdf'], type: FileType.custom);
     String? path = result?.files.single.path;
     if (path != null) {
           setState(() {
@@ -334,7 +333,6 @@ class _PDFUploadScreenState extends State<PDFUploadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: header(context, strTitle: "Upload PDF"),
         body: file != null
             ? _pdfList()
             : Center(
@@ -343,40 +341,42 @@ class _PDFUploadScreenState extends State<PDFUploadScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10), color: kWhite),
                     child: Padding(
-                      padding: EdgeInsets.all(30.0),
+                      padding: const EdgeInsets.all(30.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(height: 30.0),
-                          Image(
+                          const SizedBox(height: 50.0),
+                          const Image(
+                            width: 200,
+                            height: 200,
                               image: AssetImage("assets/images/student1.png")),
-                          SizedBox(height: 20.0),
-                          Padding(
+                          const SizedBox(height: 20.0),
+                          const Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 30.0, vertical: 10.0),
                             child: Text(
-                                "Help us grow! Upload and share your study materials with other students.",
+                                "Help MyCBT community grow! Upload and share your study materials with other students.",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 15.0,
-                                    fontWeight: FontWeight.w600)),
+                                    fontWeight: FontWeight.w500)),
                           ),
-                          SizedBox(height: 10.0),
+                          const SizedBox(height: 10.0),
                           GestureDetector(
                             onTap: () => selectDocs(),
                             child: Container(
                               height: 40,
                               width: 200,
-                              child: Center(
+                              decoration: BoxDecoration(
+                                  color:kPrimaryColor,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: const Center(
                                 child: Text("UPLOAD AND SHARE",
                                     style: TextStyle(
                                         color: kWhite,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w500,
                                         fontSize: 14.0)),
                               ),
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
-                                  borderRadius: BorderRadius.circular(5)),
                             ),
                           ),
                         ],
@@ -387,7 +387,7 @@ class _PDFUploadScreenState extends State<PDFUploadScreen> {
           onPressed: () => selectDocs(),
           backgroundColor: kPrimaryColor,
           splashColor: kSecondaryColor,
-          child: Icon(Icons.add, size: 25.0, color: Colors.white),
+          child: const Icon(Icons.add, size: 25.0, color: Colors.white),
         ));
   }
 }

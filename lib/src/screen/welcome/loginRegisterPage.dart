@@ -14,10 +14,13 @@ import 'package:flutter/material.dart';
 import 'package:mycbt/src/services/Authentication.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:uuid/uuid.dart';
 
 class LoginRegisterPage extends StatefulWidget {
+  const LoginRegisterPage({Key? key}) : super(key: key);
+
   @override
   _LoginRegisterPageState createState() => _LoginRegisterPageState();
 }
@@ -41,14 +44,16 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   bool obscurePassword = true;
   bool isLoading = false;
   String loginType = "";
-  Icon visibilityIcon = Icon(Icons.visibility);
+  Icon visibilityIcon = const Icon(Icons.visibility);
   AuthImplementation auth = Auth();
-  TextStyle labeStyle = TextStyle(color: Colors.white, fontSize: 14);
-  String nid = Uuid().v4();
+  TextStyle labeStyle = const TextStyle(color: Colors.white, fontSize: 14);
+  String nid = const Uuid().v4();
 
   @override
   void initState() {
-    readFile();
+    if(!kIsWeb){
+      readFile();
+    }
     super.initState();
   }
 
@@ -138,13 +143,13 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
       });
       try {
         if (_formType == FormType.login) {
-          await auth.SignIn(_email, _password);
+          await auth.SignIn(_email.trim(), _password.trim());
           Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => HomeTab(
                     view: "",
                   )));
         } else {
-          String userId = await auth.SignUp(_email, _password);
+          String userId = await auth.SignUp(_email.trim(), _password.trim());
           if (userId != null) {
             saveUser(userId);
             Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -205,7 +210,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
     ));
     return Scaffold(
         body: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage("assets/images/launch_image.jpg"),
                     fit: BoxFit.cover)),
@@ -230,7 +235,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                                   children: createInput() +
                                       createButtons() +
                                       [
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 30.0,
                                         )
                                       ],
@@ -264,6 +269,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
         ),
         TextFormField(
           style: labeStyle,
+          keyboardType:TextInputType.emailAddress,
           decoration: InputDecoration(
             isDense: true,
             contentPadding: EdgeInsets.all(8.0),
@@ -291,12 +297,13 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
           style: labeStyle,
           decoration: InputDecoration(
             isDense: true,
-            contentPadding: EdgeInsets.all(8.0),
+            contentPadding: const EdgeInsets.all(8.0),
             prefixIcon: Icon(
               Icons.lock,
               size: 18.0,
               color: Colors.grey,
             ),
+            
             suffixIcon: IconButton(
                 icon: visibilityIcon,
                 color: Colors.grey,
@@ -412,7 +419,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
             isDense: true,
             border:
                 OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-            focusedBorder: OutlineInputBorder(
+            focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.lightGreen),
             ),
             labelText: 'Referral Code(optional)',
@@ -476,37 +483,29 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                       height: 45,
                       width: 330,
                       decoration: BoxDecoration(
-                          color: kSecondaryColor,
-                          gradient: LinearGradient(
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                kSecondaryColor,
-                              ],
-                              tileMode: TileMode.clamp,
-                              stops: [0.0, 1.0],
-                              begin:  FractionalOffset(0.0, 0.0),
-                              end: FractionalOffset(1.0, 0.0)),
+                          color: kPrimaryColor,
+                         
                           borderRadius: BorderRadius.circular(5)),
-                      child: Center(
+                      child: const Center(
                           child:
-                              Text("SIGN IN", style: TextStyle(color: kWhite))),
+                              Text("SIGN IN", style: TextStyle(color: kWhite, fontWeight: FontWeight.w700))),
                     ),
                   )),
         Padding(
-          padding:  EdgeInsets.only(top: 0, left: 10.0, right: 10.0),
+          padding:  const EdgeInsets.only(top: 0, left: 10.0, right: 10.0),
           child: TextButton(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+              children: const <Widget>[
                 Text("Forgot password?",
                     style: TextStyle(
                         fontSize: 14.0,
                         color: Colors.grey,
-                        fontFamily: "Lato")),
-                Text(" reset pasword.",
+                       )),
+                Text(" Reset pasword.",
                     style: TextStyle(
                       fontSize: 14.0,
-                      color: Colors.lightGreen,
+                      color: kPrimaryColor
                     )),
               ],
             ),
@@ -516,44 +515,37 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
             },
           ),
         ),
-        Padding(
-            padding:  EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-            child: OutlinedButton(
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(
-                          Colors.white),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(
-                          kPrimaryColor),
-                  shape: MaterialStateProperty.all<
-                      RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24.0),
-                    ),
-                  ),
-                ),
-              child: const Text(
-                "Create account ",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              onPressed: moveToRegister,
-            )),
-        SizedBox(
-          height: 10.0,
-        ),
+
+         Padding(
+            padding:  const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+            child:Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Text("Create new account? ",
+                          style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.grey)),
+
+                      GestureDetector(
+                        onTap: () => moveToRegister(),
+                        child: const Text("Register",
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                              color: kPrimaryColor,
+                            )),
+                      )
+                    ]), ),
+         const SizedBox(height: 30,),
         LoginOptions()
       ];
     } else {
       return [
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         Padding(
-            padding:  EdgeInsets.only(
+            padding:  const EdgeInsets.only(
               top: 10.0,
             ),
             child: isLoading
@@ -572,20 +564,12 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                       height: 45,
                       width: 330,
                       decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          gradient: LinearGradient(
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                kSecondaryColor,
-                              ],
-                              tileMode: TileMode.clamp,
-                              stops: [0.0, 1.0],
-                              begin:  FractionalOffset(0.0, 0.0),
-                              end: FractionalOffset(1.0, 0.0)),
+                          color: kPrimaryColor,
+    
                           borderRadius: BorderRadius.circular(5)),
-                      child: Center(
+                      child: const Center(
                           child:
-                              Text("SIGN UP", style: TextStyle(color: kWhite))),
+                              Text("SIGN UP", style: TextStyle(color: kWhite, fontWeight: FontWeight.w700))),
                     ),
                   )),
 
@@ -615,7 +599,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                                 fontWeight: FontWeight.bold,
                                 color: kPrimaryColor)),
                       ),
-                      Text("and ",
+                      const Text("and ",
                           style: TextStyle(
                             fontSize: 14.0,
                             color: Colors.grey,
@@ -623,7 +607,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                       GestureDetector(
                         onTap: () => launchURL(
                             "https://cbt-exams-bc05c.web.app/mycbt_policy.html"),
-                        child: Text("Privacy Policy ",
+                        child: const Text("Privacy Policy ",
                             style: TextStyle(
                               fontSize: 14.0,
                               fontWeight: FontWeight.bold,
@@ -634,28 +618,25 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
               ],
             )),
         Padding(
-            padding:  EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-            child: OutlinedButton(
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(
-                          Colors.white),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(
-                          kPrimaryColor),
-                  shape: MaterialStateProperty.all<
-                      RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24.0),
-                    ),
-                  ),
-                ),
-              child: Text("I already have an account",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w700)),
-              onPressed: moveToLogin,
+            padding:  const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+            child:Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Text("Already have an account? ",
+                          style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.grey)),
 
-            )),
+                      GestureDetector(
+                        onTap:moveToLogin,
+                        child: const Text("Login",
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                              color: kPrimaryColor,
+                            )),
+                      )
+                    ]), ),
         //  LoginOptions()
       ];
     }

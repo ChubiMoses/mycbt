@@ -431,10 +431,12 @@ class _WithCourseState extends State<WithCourse> {
                           child:  const Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 70.0, vertical: 15),
-                              child: Text("CLOSE",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: kWhite)),
+                              child: Center(
+                                child: Text("CLOSE",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: kWhite)),
+                              ),
                           
                             
                            

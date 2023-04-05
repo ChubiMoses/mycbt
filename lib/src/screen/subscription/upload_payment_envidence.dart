@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -236,15 +237,15 @@ class _UploadPaymentEnvidenceState extends State<UploadPaymentEnvidence> {
                                           color: kGrey600),
                                     ),
                                   ),
-                                  SizedBox(height: 5.0),
+                                  SizedBox(height: 10.0),
                                   uploading
                                       ? const SizedBox(
-                                          width: 20.0,
-                                          height: 20.0,
+                                          width: 40.0,
+                                          height: 40.0,
                                           child: CircularProgressIndicator(
                                             valueColor: AlwaysStoppedAnimation(
                                                 kPrimaryColor),
-                                            strokeWidth: 2.0,
+                                            strokeWidth: 3.0,
                                           ),
                                         )
                                       : GestureDetector(
@@ -255,7 +256,7 @@ class _UploadPaymentEnvidenceState extends State<UploadPaymentEnvidence> {
                                             decoration: BoxDecoration(
                                               color: file == null
                                                   ? kGrey400
-                                                  : Colors.orange,
+                                                  :kPrimaryColor,
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                             ),
@@ -264,10 +265,10 @@ class _UploadPaymentEnvidenceState extends State<UploadPaymentEnvidence> {
                                                     .size
                                                     .width -
                                                 30,
-                                            child: Center(
-                                                child: Text("VERIFY",
+                                            child: const Center(
+                                                child: Text("UPLOAD",
                                                     style: TextStyle(
-                                                        color: Colors.white))),
+                                                        color: Colors.white, fontWeight: FontWeight.w600))),
                                           ),
                                         ),
                                 ],

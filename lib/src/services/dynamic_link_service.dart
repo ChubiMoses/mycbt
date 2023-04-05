@@ -1,6 +1,6 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:mycbt/src/models/referral.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/services/referral_service.dart';
 
 Future<String> createDynamicLink({required String id, title}) async {

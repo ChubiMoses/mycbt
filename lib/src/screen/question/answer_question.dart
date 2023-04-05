@@ -3,11 +3,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mycbt/src/models/question.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/profile/profile_image.dart';
 import 'package:mycbt/src/screen/question/questions_tile.dart';
 import 'package:mycbt/src/services/image_service.dart';
 import 'package:mycbt/src/services/notify.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
 import 'package:mycbt/src/widgets/HeaderWidget.dart';
@@ -20,7 +21,7 @@ class AnswerQuestion extends StatefulWidget {
   final String id;
   final String userId;
   final String token;
-  AnswerQuestion(this.id, this.userId, this.token);
+  const AnswerQuestion(this.id, this.userId, this.token, {Key? key}) : super(key: key);
   @override
   _AnswerQuestionState createState() => _AnswerQuestionState();
 }
@@ -152,7 +153,7 @@ class _AnswerQuestionState extends State<AnswerQuestion> {
       content: Text(message),
       actions: <Widget>[
         TextButton(
-          child: Text("Update"),
+          child: const Text("Update"),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
@@ -160,7 +161,7 @@ class _AnswerQuestionState extends State<AnswerQuestion> {
           },
         ),
         TextButton(
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -177,7 +178,9 @@ class _AnswerQuestionState extends State<AnswerQuestion> {
       body: GestureDetector(
         onTap: () => Focus.of(context).unfocus(),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(.60),
+           padding:EdgeInsets.symmetric(
+              horizontal:ResponsiveHelper.isDesktop(context) ? 300 :
+              ResponsiveHelper.isTab(context) ? 200 : 0, vertical: ResponsiveHelper.isMobilePhone() ? 0 : 20),
           child: Column(
             children: <Widget>[
               uploading ? linearProgress() : SizedBox.shrink(),
@@ -241,10 +244,10 @@ class _AnswerQuestionState extends State<AnswerQuestion> {
                         backgroundColor: Colors.transparent,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
-                    Text(
+                    const Text(
                       "Question",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     )

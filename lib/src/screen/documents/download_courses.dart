@@ -46,7 +46,7 @@ class _ContentUpdateState extends State<ContentUpdate> {
                           radius: 50.0,
                           backgroundColor: Colors.transparent,
                         )
-                      : SizedBox(
+                      : const SizedBox(
                           width: 50.0,
                           height: 50.0,
                           child: CircularProgressIndicator(

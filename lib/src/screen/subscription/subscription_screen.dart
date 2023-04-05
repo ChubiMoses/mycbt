@@ -1,6 +1,8 @@
 import 'dart:io';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
-import 'package:mycbt/src/screen/modal/subscription_modal.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
+import 'package:mycbt/src/screen/subscription/payment_sucessfful.dart';
+import 'package:mycbt/src/screen/subscription/sub_instructions.dart';
+import 'package:mycbt/src/services/referal_reward.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/widgets/displayToast.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,7 @@ import 'package:device_info/device_info.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
 import 'package:mycbt/src/services/Authentication.dart';
 import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
-import 'package:flutterwave_payment/flutterwave_payment.dart';
+import 'package:flutterwave_standard/flutterwave.dart';
 
 class Subscription extends StatefulWidget {
   @override
@@ -18,6 +20,7 @@ class Subscription extends StatefulWidget {
 }
 
 class _ActivateMyAppState extends State<Subscription> {
+  late Flutterwave flutterwave;
   String path = '';
   File? file;
   String type = '';
@@ -46,7 +49,6 @@ class _ActivateMyAppState extends State<Subscription> {
   bool acceptUgMMPayments = false;
   bool acceptMMFrancophonePayments = false;
   bool live = true;
-  List<SubAccount> subAccounts = [];
   bool preAuthCharge = false;
   bool addSubAccounts = false;
   String publicKey = "FLWPUBK-832ef113eec3cafd5a70fec8ba8de8b3-X";
@@ -61,6 +63,7 @@ class _ActivateMyAppState extends State<Subscription> {
   @override
   initState() {
     super.initState();
+    _handlePaymentInitialization();
     checkPendingSub();
   }
 
@@ -210,10 +213,9 @@ class _ActivateMyAppState extends State<Subscription> {
                                                       : pending
                                                           ? "PENDING"
                                                           : "BECOME A PRO USER",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 16.0,
-                                                      fontFamily: "bariol",
                                                       fontWeight:
                                                           FontWeight.w600)),
                                             ),
@@ -346,7 +348,7 @@ class _ActivateMyAppState extends State<Subscription> {
                           child: Column(
                             children: [
                               SizedBox(height: 30),
-                              Text(
+                              const Text(
                                 "Automatically become a Pro User  by paying the subscription fee online.",
                                 style: TextStyle(
                                     fontSize: 15.0,
@@ -355,7 +357,9 @@ class _ActivateMyAppState extends State<Subscription> {
                               ),
                               SizedBox(height: 10),
                               GestureDetector(
-                                onTap: () => startPayment(),
+                                onTap: () {
+                                  handlePay();
+                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: Colors.orange,
@@ -383,12 +387,12 @@ class _ActivateMyAppState extends State<Subscription> {
                               Text(
                                 error +
                                     "Become a Pro User by making a transfer and uploading evidence of payment.",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 15.0,
                                     color: kBlack400,
                                     fontWeight: FontWeight.w600),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               GestureDetector(
                                 onTap: () {
                                   auth.isSignedIn().then((user) {
@@ -399,7 +403,11 @@ class _ActivateMyAppState extends State<Subscription> {
                                               builder: (context) =>
                                                   LoginRegisterPage()));
                                     } else {
-                                      activationModal(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  InstructionScreen()));
                                     }
                                   });
                                 },
@@ -426,7 +434,7 @@ class _ActivateMyAppState extends State<Subscription> {
         ));
   }
 
-  dynamic acceptTerms(mContext) {
+  dynamic accetTerms(mContext) {
     return showDialog(
         context: mContext,
         builder: (context) {
@@ -491,88 +499,62 @@ class _ActivateMyAppState extends State<Subscription> {
         });
   }
 
-  // void startPayment() async {
-  //   txRef = "rave_flutter-${DateTime.now().toString()}";
-  //   orderRef = "rave_flutter-${DateTime.now().toString()}";
-  //   var initializer = RavePayInitializer(
-  //       amount: double.parse(snippet.amount),
-  //       publicKey: publicKey,
-  //       encryptionKey: encryptionKey,
-  //       subAccounts: subAccounts.isEmpty ? null : null)
-  //     ..country = country = country.isNotEmpty ? country : "NG"
-  //     ..currency = currency.isNotEmpty ? currency : "NGN"
-  //     ..email = currentUser.email
-  //     ..fName = currentUser.username
-  //     ..lName = currentUser.username
-  //     ..narration = narration ?? ''
-  //     ..txRef = txRef
-  //     ..orderRef = orderRef
-  //     ..acceptMpesaPayments = acceptMpesaPayment
-  //     ..acceptAccountPayments = acceptAccountPayment
-  //     ..acceptCardPayments = acceptCardPayment
-  //     ..acceptAchPayments = acceptAchPayments
-  //     ..acceptGHMobileMoneyPayments = acceptGhMMPayments
-  //     ..acceptUgMobileMoneyPayments = acceptUgMMPayments
-  //     ..acceptMobileMoneyFrancophoneAfricaPayments = acceptMMFrancophonePayments
-  //     ..displayEmail = false
-  //     ..displayAmount = false
-  //     ..staging = !live
-  //     ..isPreAuth = preAuthCharge
-  //     ..displayFee = shouldDisplayFee;
-  //   var response;
-  //   try {
-  //     response = await RavePayManager()
-  //         .prompt(context: context, initializer: initializer);
-  //     displayToast(response?.message);
-  //     if (response?.status.toString() == "RaveStatus.success") {
-  //       DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-  //       AndroidDeviceInfo androidInfo = await deviceInfoPlugin.androidInfo;
-  //       user.doc(currentUser.id).set({
-  //         "ownerId": currentUser.id,
-  //         "device": androidInfo.model,
-  //       });
-  //       refferrerReward(currentUser.code);
-  //       Navigator.push(context,
-  //           MaterialPageRoute(builder: (context) => PaymentSucessful()));
-  //     }
-  //   } catch (e) {
-  //     displayToast(response?.message);
-  //   }
-  // }
+  _handlePaymentInitialization() async {
+    final style = FlutterwaveStyle(
+        appBarText: "My CBT Subscription",
+        buttonColor: const Color(0xffd0ebff),
+        appBarIcon: const Icon(Icons.message, color: Color(0xffd0ebff)),
+        buttonTextStyle: const TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+        appBarColor: const Color(0xffd0ebff),
+        dialogCancelTextStyle: const TextStyle(color: Colors.redAccent, fontSize: 18),
+        dialogContinueTextStyle:
+            const TextStyle(color: Colors.blue, fontSize: 18));
 
-  void startPayment() async {
-    displayToast("Not available at the moment");
-    // var initializer = RavePayInitializer(
-    //     amount: 50,
-    //     publicKey: publicKey,
-    //     encryptionKey: encryptionKey,
-    //     subAccounts: subAccounts.isEmpty ? null : null)
-    //   ..country =
-    //       country = country != null && country.isNotEmpty ? country : "NG"
-    //   ..currency = currency != null && currency.isNotEmpty ? currency : "NGN"
-    //   ..email = currentUser!.email
-    //   ..fName = currentUser!.username
-    //   ..lName = currentUser!.email
-    //   ..narration = narration
-    //   ..txRef = "rave_flutter-${DateTime.now().toString()}"
-    //   ..orderRef = "rave_flutter-${DateTime.now().toString()}"
-    //   ..acceptMpesaPayments = acceptMpesaPayment
-    //   ..acceptAccountPayments = acceptAccountPayment
-    //   ..acceptCardPayments = acceptCardPayment
-    //   ..acceptAchPayments = acceptAchPayments
-    //   ..acceptGHMobileMoneyPayments = acceptGhMMPayments
-    //   ..acceptUgMobileMoneyPayments = acceptUgMMPayments
-    //   ..acceptMobileMoneyFrancophoneAfricaPayments = acceptMMFrancophonePayments
-    //   ..displayEmail = false
-    //   ..displayAmount = false
-    //   ..staging = !live
-    //   ..isPreAuth = preAuthCharge
-    //   ..displayFee = shouldDisplayFee;
+    final Customer customer = Customer(
+        name: currentUser!.username,
+        phoneNumber: currentUser!.phone == ''
+            ? "08116264810"
+            : currentUser!.phone.toString(),
+        email: currentUser!.email);
 
-    // var response = await RavePayManager()
-    //     .prompt(context: context, initializer: initializer);
-    // setState(() {
-    //   error = response.toString();
-    // });
+    flutterwave = Flutterwave(
+        context: context,
+        style: style,
+        publicKey: "FLWPUBK-832ef113eec3cafd5a70fec8ba8de8b3-X",
+        currency: "NGN",
+        redirectUrl:
+            'https://play.google.com/store/apps/details?id=com.ccr.weewaa"',
+        txRef: DateTime.now().toString(),
+        amount:snippet?.amount??"1500",
+        customer: customer,
+        paymentOptions: "ussd, card, barter, payattitude",
+        customization: Customization(title: "Subscription"),
+        isTestMode: false);
   }
+
+ void handlePay()async{
+      await _handlePaymentInitialization();
+    final ChargeResponse response =
+        await flutterwave.charge();
+    if (response != null) {
+      if (response.status == 'success') {
+                DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+                  AndroidDeviceInfo androidInfo = await deviceInfoPlugin.androidInfo;
+                  activeSubReference.doc(currentUser!.id).set({
+                    "ownerId": currentUser!.id,
+                    "device": androidInfo.model,
+                  });
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => PaymentSucessful()));
+                    refferrerReward(currentUser?.code??"");
+            displayToast("Transaction  successful");
+                
+      } else {
+        displayToast("Transaction not successful");
+      }
+    } else {
+      displayToast("User cancelled");
+    }
+ }
 }

@@ -1,6 +1,6 @@
 
 List years = [
-  'Year',
+  'Select Year',
   '2019',
   '2018',
   '2017',
@@ -11,7 +11,6 @@ List years = [
 
 
 List duration = [
-  'Duration',
   '60',
   '50',
   '40',
@@ -19,4 +18,25 @@ List duration = [
   '20',
   '15',
   '10',
+];
+
+
+
+List questionsList = [
+  '100',
+  '80',
+  '70',
+  '60',
+  '50',
+  '40',
+  '30',
+  '20',
+  '15',
+  '10',
+];
+
+
+List admin = [
+  'mycbt@gmail.com',
+  'saaondoakp@gmail.com'
 ];

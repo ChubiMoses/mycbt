@@ -47,7 +47,7 @@ class _AdminLoginState extends State<AdminLogin> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
               child: TextFormField(
                 controller: passwordC,
                 style: textStyle,

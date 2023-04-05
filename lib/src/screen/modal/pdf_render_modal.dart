@@ -4,6 +4,7 @@ import 'package:mycbt/src/screen/conversation/doc_conversation.dart';
 import 'package:mycbt/src/screen/documents/pdf_view.dart';
 import 'package:mycbt/src/services/ads_service.dart';
 import 'package:mycbt/src/services/file_service.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class PDFRenderModal extends StatefulWidget {
   final bool preview;
   final VoidCallback refresh;
 
-   PDFRenderModal(
+  const PDFRenderModal(
       {required this.progress,
       required this.firebaseId,
       required this.title,
@@ -45,7 +46,9 @@ class _SelectYearOneYearState extends State<PDFRenderModal> {
   @override
   initState() {
     super.initState();
-    _bannerAd = BannerAd(
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+       _bannerAd = BannerAd(
         size: AdSize.mediumRectangle,
         adUnitId: AdHelper.bannerAdUnitId,
         listener: BannerAdListener(onAdLoaded: (_) {
@@ -56,9 +59,11 @@ class _SelectYearOneYearState extends State<PDFRenderModal> {
           adReady = false;
           ad.dispose();
         }),
-        request:  AdRequest())
+        request: const AdRequest())
       ..load();
 
+    });
+   
     renderPDF();
   }
 
@@ -82,21 +87,25 @@ class _SelectYearOneYearState extends State<PDFRenderModal> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+     padding: EdgeInsets.symmetric(
+              horizontal:
+             ResponsiveHelper.isDesktop(context) ? 300 :
+             ResponsiveHelper.isTab(context) ? 200 : 0
+             ),
       child: Container(
         width: double.infinity,
-        decoration:  BoxDecoration(
+        decoration: const BoxDecoration(
             color: kBgScaffold,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30), topRight: Radius.circular(30))),
         child: Padding(
-          padding:  EdgeInsets.fromLTRB(14, 5, 10, 10),
+          padding: const EdgeInsets.fromLTRB(14, 5, 10, 10),
           child: Padding(
-            padding:
-                 EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                 SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Container(
@@ -111,16 +120,16 @@ class _SelectYearOneYearState extends State<PDFRenderModal> {
                           child: LinearProgressIndicator(
                             backgroundColor: kGrey300,
                             value: isLoading ? null : 1,
-                            valueColor:  AlwaysStoppedAnimation(
+                            valueColor: AlwaysStoppedAnimation(
                                 Theme.of(context).primaryColor),
                           ),
                         ),
                         Container(
-                          margin:  EdgeInsets.only(top: 6),
+                          margin: const EdgeInsets.only(top: 6),
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(isLoading ? "50%" : "100%",
-                                style:  TextStyle(
+                                style: const TextStyle(
                                   color: kWhite,
                                 )),
                           ),
@@ -129,7 +138,7 @@ class _SelectYearOneYearState extends State<PDFRenderModal> {
                     ),
                   ),
                 ),
-                 SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 GestureDetector(
@@ -169,39 +178,43 @@ class _SelectYearOneYearState extends State<PDFRenderModal> {
                         ),
                       ),
                     )),
-                 SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
-                  GestureDetector(
-                    onTap:  ()  {
-                     Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DocConversation(
-                                        code: widget.code,
-                                        docId: widget.firebaseId,
-                                        title: widget.title)));
-                          
-                          },
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DocConversation(
+                                  code: widget.code,
+                                  docId: widget.firebaseId,
+                                  title: widget.title)));
+                    },
                     child: Container(
                       height: 45,
                       width: MediaQuery.of(context).size.width - 50,
                       decoration: BoxDecoration(
-                          color:kWhite,
+                          color: kWhite,
                           borderRadius: BorderRadius.circular(50)),
                       child: Center(
                         child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                               Icon(CupertinoIcons.chat_bubble_2,
-                                  color: kBlack400),
-                               Text(widget.conversation == 0
-                                  ? "  CONVERSATIONS" :"  CONVERSATIONS (${widget.conversation.toString()})", style: TextStyle(fontSize:14, fontWeight: FontWeight.w600),)
-                            ],
-                          ),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(CupertinoIcons.chat_bubble_2,
+                                color: kBlack400),
+                            Text(
+                              widget.conversation == 0
+                                  ? "  CONVERSATIONS"
+                                  : "  CONVERSATIONS (${widget.conversation.toString()})",
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
                       ),
                     )),
-                 SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 adReady
@@ -210,7 +223,7 @@ class _SelectYearOneYearState extends State<PDFRenderModal> {
                         width: _bannerAd.size.width.toDouble(),
                         child: AdWidget(ad: _bannerAd),
                       )
-                    :  SizedBox.shrink(),
+                    : const SizedBox.shrink(),
               ],
             ),
           ),

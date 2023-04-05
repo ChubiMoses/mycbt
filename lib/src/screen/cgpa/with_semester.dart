@@ -471,10 +471,12 @@ class _WithSemesterState extends State<WithSemester> {
                             child: const Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 70.0, vertical: 15),
-                              child: Text("CLOSE",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: kWhite)),
+                              child: Center(
+                                child: Text("CLOSE",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: kWhite)),
+                              ),
                             ),
                             color: Theme.of(context).primaryColor,
                             

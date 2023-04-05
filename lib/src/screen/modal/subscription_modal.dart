@@ -1,5 +1,4 @@
 import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/subscription/subscription_screen.dart';
 import 'package:mycbt/src/utils/colors.dart';

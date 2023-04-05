@@ -48,8 +48,8 @@ class _AddCoursesState extends State<CBTCourseList> {
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.separated(
                     itemCount: courses.length,
-                    physics: BouncingScrollPhysics(),
-                    separatorBuilder: (context, i) => Divider(
+                    physics: const BouncingScrollPhysics(),
+                    separatorBuilder: (context, i) => const Divider(
                           height: 2,
                         ),
                     itemBuilder: (BuildContext context, int i) {
@@ -63,8 +63,7 @@ class _AddCoursesState extends State<CBTCourseList> {
                                   : kWhite,
                               child: Text("${i + 1}"),
                             ),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
                             title: Text(
                               courses[i].title ?? "",
                               style: TextStyle(fontSize: 14),

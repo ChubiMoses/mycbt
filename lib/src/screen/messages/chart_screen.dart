@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mycbt/src/data/models/chat_model.dart';
 import 'package:mycbt/src/models/user.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/modal/message_file_selector.dart';
+import 'package:mycbt/src/screen/question/report.dart';
 import 'package:mycbt/src/services/message_service.dart';
 import 'package:mycbt/src/services/user_online_checker.dart';
 import 'package:mycbt/src/utils/colors.dart';
@@ -245,12 +247,20 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
             ),
-            actions: unsentMessage
-                ? <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.white),
-                      onPressed: () {
-                        messageRef
+                 actions: [
+                  PopupMenuButton<String>(
+                    itemBuilder: (_) {
+                      return  [
+                        PopupMenuItem<String>(value: "1", child: Text("Block")),
+                        PopupMenuItem<String>(value: "2", child: Text("Report")),
+                        unsentMessage ?   PopupMenuItem<String>(value: "3", child: Text("Report")) : PopupMenuItem<String>(value: "2", child: Text("")),
+                      ];
+                    },
+                    icon: const Icon(Icons.more_vert),
+                    onSelected: (i) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ReportScreen(postId: "", ownerId: widget.user.id, view: "Profile")));
+                      if(i == "3"){
+                          messageRef
                             .doc(chatId)
                             .collection("Items")
                             .doc()
@@ -259,10 +269,12 @@ class _ChatScreenState extends State<ChatScreen> {
                           setState(() => unsentMessage = false);
                           // loadMessages();
                         });
-                      },
-                    ),
+                      }
+                    },
+                  ),
+          
                   ]
-                : null,
+                
           ),
           body: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),

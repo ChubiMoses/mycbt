@@ -17,36 +17,35 @@ class CoursesDbHelper {
   String url = 'url';
   String type = 'type';
   String ownerId = "ownerId";
+  String username = 'username';
+  String ownerImage = "ownerImage";
   String bytes = "bytes";
   String visible = "visible";
   String conversation = "conversation";
-  String likeIds = "likeIds";
+  String ratings = "ratings";
   String code = "code";
   String favorite = "favorite";
+  String dateUploaded = "dateUploaded";
   String category = "category";
 
   // ignore: unused_element
   CoursesDbHelper._createInstance(); // Named constructor to create instance of CoursesDbHelper
 
   factory CoursesDbHelper() {
-    if (_databaseHelper == null) {
-      _databaseHelper = CoursesDbHelper
-          ._createInstance(); // This is executed only once, singleton object
-    }
+    _databaseHelper ??= CoursesDbHelper
+          ._createInstance();
     return _databaseHelper!;
   }
 
   Future<Database> get database async {
-    if (_database == null) {
-      _database = await initializeDatabase();
-    }
+    _database ??= await initializeDatabase();
     return _database!;
   }
 
   Future<Database> initializeDatabase() async {
     // Get the directory path for both Android and iOS to store database.
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = directory.path + 'cbin.db';
+    String path = '${directory.path}dddb.db';
 
     // Open/create the database at a given path
     var notesDatabase =
@@ -56,9 +55,9 @@ class CoursesDbHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE $table ($id INTEGER PRIMARY KEY AUTOINCREMENT, $fID TEXT UNIQUE,'
+        'CREATE TABLE $table ($id INTEGER PRIMARY KEY AUTOINCREMENT, $fID TEXT,'
         '$title TEXT, $type INTEGER , $school TEXT, $url TEXT, $ownerId TEXT, $conversation INTEGER,'
-        ' $likeIds TEXT, $category TEXT, $favorite INTEGER, $bytes INTEGER,  $visible INTEGER , $code TEXT)');
+        ' $ratings TEXT, $category TEXT, $dateUploaded TEXT, $username TEXT, $ownerImage TEXT, $favorite INTEGER, $bytes INTEGER,  $visible INTEGER , $code TEXT)');
   }
 
   // Fetch Operation: Get all quiz objects from database

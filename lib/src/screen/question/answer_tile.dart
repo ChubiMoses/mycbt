@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mycbt/src/models/user.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/profile/user_info.dart';
 import 'package:mycbt/src/screen/question/report.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
@@ -301,17 +302,18 @@ class _AnswerTileState extends State<AnswerTile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width - 70,
             margin: const EdgeInsets.symmetric(horizontal: 10.0),
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6),
-              child: RichText(
-                text: TextSpan(
-                  children: widget.answer
-                      .split(' ')
-                      .map((String t) => validateText(context, t))
-                      .toList(),
+              child: SizedBox(
+                width:MediaQuery.of(context).size.width - 100,
+                child: RichText(
+                  text: TextSpan(
+                    children: widget.answer
+                        .split(' ')
+                        .map((String t) => validateText(context, t))
+                        .toList(),
+                  ),
                 ),
               ),
             ),

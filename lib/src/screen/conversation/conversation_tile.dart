@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:mycbt/src/screen/conversation/comments.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/profile/user_info.dart';
 import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/question/photo_preview.dart';
 import 'package:mycbt/src/services/notify.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/widgets/more_action_dialog.dart';
 import 'package:mycbt/src/widgets/validate_post_text.dart';
@@ -383,7 +385,7 @@ class _ConversationTileState extends State<ConversationTile> {
             height: 35.0,
             width: MediaQuery.of(context).size.width,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 currentUser == null
                     ? CircleAvatar(
@@ -398,7 +400,10 @@ class _ConversationTileState extends State<ConversationTile> {
                         radius: 20.0,
                       ),
                 Container(
-                  width: MediaQuery.of(context).size.width - 80,
+                  width: ResponsiveHelper.isDesktop(context) ? 300  :  
+                   ResponsiveHelper.isTab(context) ? 300 :
+                   ResponsiveHelper.isMobile(context) ? 300 :
+                    MediaQuery.of(context).size.width - 80,
                   decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(15.0),
@@ -409,7 +414,7 @@ class _ConversationTileState extends State<ConversationTile> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LoginRegisterPage()));
+                                builder: (context) => const LoginRegisterPage()));
                       } else {
                         displayComments(context,
                             postId: postId,

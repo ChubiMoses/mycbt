@@ -6,7 +6,7 @@ List<BannerAd> adWidgets() {
   List<BannerAd> adList = [];
   for (var i = 0; i < 5; i++) {
     bool adLoaded = false;
-    Future.delayed(Duration(seconds: 2),(){
+    Future.delayed(const Duration(seconds: 2),(){
       BannerAd ad = BannerAd(
         size: AdSize.banner,
         adUnitId: AdHelper.bannerAdUnitId,
@@ -15,7 +15,7 @@ List<BannerAd> adWidgets() {
         }, onAdFailedToLoad: (ad, LoadAdError error) {
           ad.dispose();
         }),
-        request: AdRequest())
+        request: const AdRequest())
       ..load();
       if (adLoaded) {
       adList.add(ad);
@@ -29,17 +29,17 @@ List<BannerAd> adWidgets() {
 class AdHelper {
   static String get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return "ca-app-pub-4039091031657074/9809384753";
+      return "ca-app-pub-7536967088300634/3106005839"; //ca-app-pub-3940256099942544/6300978111
     } else if (Platform.isIOS){
-      return 'ca-app-pub-3940256099942544/2934735716';
+      return 'ca-app-pub-3940256099942544/2934735716'; //ca-app-pub-3940256099942544/1033173712
     } else {
-      throw UnsupportedError("unsupported Platform");
+      throw UnsupportedError("unsupported Platform"); //ca-app-pub-3940256099942544/5224354917
     }
   }
 
   static String get interstitialAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-4039091031657074/5768415002';
+      return 'ca-app-pub-7536967088300634/3957118735';
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/4411468910';
     } else {
@@ -49,11 +49,11 @@ class AdHelper {
 
   static String get rewardedAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-4039091031657074/6032224255';
+      return 'ca-app-pub-7536967088300634/3844372436';
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/7552160883';
     } else {
-      throw new UnsupportedError('Unsupported platform');
+      throw UnsupportedError('Unsupported platform');
     }
   }
 }

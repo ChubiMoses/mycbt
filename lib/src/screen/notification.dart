@@ -1,5 +1,6 @@
 import 'package:mycbt/src/screen/conversation/conversation_modal.dart';
 import 'package:mycbt/src/screen/conversation/doc_conversation.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/messages/messages.dart';
 import 'package:mycbt/src/screen/question/answers_view.dart';
@@ -175,7 +176,7 @@ class _NotificationsItemState extends State<NotificationsItem> {
                 trailing: mediaPreview,
               ),
             ),
-            Divider(
+            const Divider(
               height: 2,
               color: kGrey200,
             )
@@ -190,9 +191,9 @@ class _NotificationsItemState extends State<NotificationsItem> {
         width: 35.0,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0), color: Colors.green),
-        child: Center(
+        child: const Center(
             child: Padding(
-          padding: const EdgeInsets.all(1.0),
+          padding: EdgeInsets.all(1.0),
           child: Text(
             "new",
             style: TextStyle(color: Colors.white, fontSize: 10.0),
@@ -200,7 +201,7 @@ class _NotificationsItemState extends State<NotificationsItem> {
         )),
       );
     } else {
-      mediaPreview = SizedBox.shrink();
+      mediaPreview = const SizedBox.shrink();
     }
 
     if (widget.type == "Like Answer") {

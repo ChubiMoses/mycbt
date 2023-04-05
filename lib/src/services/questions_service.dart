@@ -20,6 +20,13 @@ Future<void> questionUpdate(String course, String school) async {
   saveOffline(quiz);
 }
 
+
+Future<List<Quiz>> getQuestions(String school, String course, int limit) async {
+  QuerySnapshot querySnapshot = await yearOneQuestionsRef.where('school', isEqualTo: school).where('course', isEqualTo: course).limit(limit).get();
+  List<Quiz> questions = querySnapshot.docs.map((document) => Quiz.fromDocument(document)).toList();
+  return questions;
+}
+
 Future<void> quizSync(int time) async {
   QuerySnapshot querySnapshot =
       await yearOneQuestionsRef.where("time", isGreaterThan: time).get();

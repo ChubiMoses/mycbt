@@ -5,13 +5,15 @@ import 'package:mycbt/src/utils/firebase_collections.dart';
 import 'package:mycbt/src/services/network%20_checker.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/widgets/ProgressWidget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mycbt/src/models/course.dart';
 import 'package:mycbt/src/widgets/displayToast.dart';
 
 class CancelSubscription extends StatefulWidget {
+  const CancelSubscription({Key? key}) : super(key: key);
+
   @override
+  // ignore: library_private_types_in_public_api
   _CancelSubscriptionState createState() => _CancelSubscriptionState();
 }
 
@@ -38,7 +40,7 @@ class _CancelSubscriptionState extends State<CancelSubscription> {
         emptyState = false;
         isLoading = true;
       });
-      await usersReference.where("email", isEqualTo: query).get().then((value) {
+      await usersReference.where("email", isEqualTo: query.trim()).get().then((value) {
         users = value.docs
             .map((documentSnapshot) => UserModel.fromDocument(documentSnapshot))
             .toList();
@@ -66,19 +68,19 @@ class _CancelSubscriptionState extends State<CancelSubscription> {
             child: TextFormField(
               keyboardType: TextInputType.emailAddress,
               controller: controller,
-              style: TextStyle(fontSize: 16.0, color: kWhite100),
+              style: const TextStyle(fontSize: 16.0, color: kWhite100),
               autofocus: true,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: EdgeInsets.all(8.0),
-                border: OutlineInputBorder(borderSide: BorderSide.none),
+                contentPadding: const EdgeInsets.all(8.0),
+                border: const OutlineInputBorder(borderSide: BorderSide.none),
                 hintText: "Email",
-                hintStyle: TextStyle(color: kWhite100),
+                hintStyle: const TextStyle(color: kWhite100),
                 filled: true,
                 focusColor: Theme.of(context).primaryColor.withOpacity(0.5),
                 suffixIcon: IconButton(
                     onPressed: () => search(),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.search,
                       color: kWhite100,
                       size: 20.0,
@@ -99,62 +101,65 @@ class _CancelSubscriptionState extends State<CancelSubscription> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: emptyState
               ? emptyStateWidget(
-                  "CancelSubscription for your favorite courses.")
+                  "Cancel/Subscribe Users.")
               : isLoading
                   ? loader()
-                  : users.length == 0
+                  : users.isEmpty
                       ? emptyStateWidget(
-                          "Subscription not found, please use  course code as keyword.")
+                          "Subscription not found")
                       : ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: users.length,
-                          separatorBuilder: (context, i) => Divider(
+                          separatorBuilder: (context, i) => const Divider(
                                 height: 2,
                               ),
                           itemBuilder: (context, i) {
                             return GestureDetector(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                child: ListTile(
-                                  dense: true,
-                                  contentPadding: EdgeInsets.all(0),
-                                  leading: IconButton(
-                                    onPressed: () =>
-                                        controllDelete(context, users[i].id),
-                                    icon: Icon(Icons.delete),
-                                  ),
-                                  trailing: IconButton(
-                                    onPressed: () =>
-                                        subscribeUser(context, users[i].id),
-                                    icon: Icon(Icons.check),
-                                  ),
-                                  title: Text(users[i].username,
-                                      style: TextStyle(
-                                          color: kBlack,
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w500)),
-                                  subtitle: TextFormField(
-                                    textCapitalization:
-                                        TextCapitalization.characters,
-                                    keyboardType: TextInputType.text,
-                                    controller: codeController,
-                                    style: TextStyle(
-                                        fontSize: 16.0, color: kWhite100),
-                                    autofocus: true,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.all(8.0),
-                                      border: OutlineInputBorder(
-                                          borderSide: BorderSide.none),
-                                      hintText: "Code",
-                                      fillColor: Theme.of(context)
-                                          .primaryColor
-                                          .withOpacity(0.5),
-                                      filled: true,
-                                      focusColor: Theme.of(context)
-                                          .primaryColor
-                                          .withOpacity(0.8),
+                                padding: const EdgeInsets.only(top: 15),
+                                child: Card(
+                                  elevation: 2,
+                                  child: ListTile(
+                                    dense: true,
+                                    contentPadding: EdgeInsets.all(0),
+                                    leading: IconButton(
+                                      onPressed: () =>
+                                          controllDelete(context, users[i].id),
+                                      icon: const Icon(Icons.close),
+                                    ),
+                                    trailing: IconButton(
+                                      onPressed: () =>
+                                          subscribeUser(context, users[i].id),
+                                      icon: const Icon(Icons.check),
+                                    ),
+                                    title: Text(users[i].username,
+                                        style: const TextStyle(
+                                            color: kBlack,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w500)),
+                                    subtitle: TextFormField(
+                                      textCapitalization:
+                                          TextCapitalization.characters,
+                                      keyboardType: TextInputType.text,
+                                      controller: codeController,
+                                      style: const TextStyle(
+                                          fontSize: 16.0, color: kWhite100),
+                                      autofocus: true,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        contentPadding: const EdgeInsets.all(8.0),
+                                        border: const OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        hintText: "Code",
+                                        fillColor: Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(0.5),
+                                        filled: true,
+                                        focusColor: Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(0.8),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -170,19 +175,23 @@ class _CancelSubscriptionState extends State<CancelSubscription> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(Icons.search, size: 100.0, color: Colors.lightGreen),
+          const Icon(Icons.lock, size: 100.0, color: Colors.lightGreen),
           SizedBox(
               width: 150.0,
               child: Text(message,
                   textAlign: TextAlign.center,
                   style:
-                      TextStyle(color: kGrey600, fontWeight: FontWeight.w600))),
+                      const TextStyle(color: kGrey600, fontWeight: FontWeight.w600))),
         ],
       ),
     );
   }
 
-  controllDelete(BuildContext context, String id) {
+  void controllDelete(BuildContext context, String id) {
+     usersReference.doc(id).update({
+        "subscribed": 0,
+      });
+
     activeSubReference.doc(id).get().then((value) {
       if (value.exists) {
         activeSubReference.doc(id).delete();
@@ -190,6 +199,14 @@ class _CancelSubscriptionState extends State<CancelSubscription> {
       } else {
         displayToast("User is not subcribed");
       }
+      
+    });
+
+     subReference.doc(id).get().then((value) {
+      if (value.exists) {
+         subReference.doc(id).delete();
+      } 
+      
     });
   }
 

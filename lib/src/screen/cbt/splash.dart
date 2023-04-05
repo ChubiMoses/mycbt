@@ -1,7 +1,9 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mycbt/src/screen/cbt/cbt_answers.dart';
+import 'package:mycbt/src/services/ads_service.dart';
 import 'package:mycbt/src/utils/colors.dart';
 
 class CongratulationSplash extends StatefulWidget {
@@ -24,10 +26,22 @@ class _CongratulationSplashState extends State<CongratulationSplash>
   bool _skyShot = false;
   double _bottom = -150;
   double averageScore = 50;
+    late InterstitialAd _interstitialAd;
+  bool _isInterstitialAdReady = false;
 
+  
   @override
   void initState() {
     super.initState();
+     InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          _isInterstitialAdReady = true;
+        }, onAdFailedToLoad: (LoadAdError error) {
+          print("failed to Load Interstitial Ad ${error.message}");
+        }));
     _controller = AnimationController(vsync: this);
     _controller!.addListener(() {
       if (_controller!.isCompleted) {
@@ -153,8 +167,10 @@ class _CongratulationSplashState extends State<CongratulationSplash>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushReplacement(
+                    onTap: ()async {
+                      if(_isInterstitialAdReady){
+                        await _interstitialAd.show();
+                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                               builder: (context) => CBTAnswers(
                                     widget.year,
@@ -164,6 +180,19 @@ class _CongratulationSplashState extends State<CongratulationSplash>
                                     widget.answers,
                                     widget.quiz,
                                   )));
+                      }else{
+                         Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => CBTAnswers(
+                                    widget.year,
+                                    widget.course,
+                                    widget.score,
+                                    widget.total,
+                                    widget.answers,
+                                    widget.quiz,
+                                  )));
+                      }
+                     
                     },
                     child: Container(
                       height: 40,
@@ -173,7 +202,7 @@ class _CongratulationSplashState extends State<CongratulationSplash>
                           borderRadius: BorderRadius.circular(10)),
                       child: const Center(
                         child: Text(
-                          "ANSWERS",
+                          "GET ANSWERS",
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w600),
                         ),

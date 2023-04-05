@@ -57,7 +57,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                 child: Text(
-                    "Help us understand the problem. what's going on with this post?",
+                    "Help us understand the problem. what's going on with this ${widget.view}?",
                     style:
                         TextStyle(fontWeight: FontWeight.w500, fontSize: 15)),
               ),
@@ -113,7 +113,7 @@ class _ReportScreenState extends State<ReportScreen> {
                             onPressed: () => reportPDF(),
                             child: const Padding(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 70.0, vertical: 15),
+                                  horizontal: 70.0, vertical: 8),
                               child: Text("DONE",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -129,7 +129,7 @@ class _ReportScreenState extends State<ReportScreen> {
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
+                                  borderRadius: BorderRadius.circular(5.0),
                                 ),
                               ),
                             ),

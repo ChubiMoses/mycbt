@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:mycbt/src/models/doc.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/services/image_service.dart';
 import 'package:mycbt/src/services/network%20_checker.dart';
@@ -38,7 +38,7 @@ class _UploadDocsState extends State<PDFDocUpload> {
   List<DocModel> validPdf = [];
   bool uploadSuccess = false;
   bool uploadFailed = false;
-  String id = Uuid().v4();
+  String id = const Uuid().v4();
   bool exist = false;
   String school = "";
   String courseId = "";
@@ -58,13 +58,17 @@ class _UploadDocsState extends State<PDFDocUpload> {
     studyMaterialsRef.doc(id).set({
       "id": id,
       "ownerId": currentUser?.id,
+      "username":currentUser!.username,
+      "ownerImage":currentUser!.url,
       "school": school,
       "title": widget.title,
       "originalTitle":widget.file.path.split("/").last,
       "bytes": widget.bytes,
       "likeIds": "",
+      "ratings": "5,",
       "conversation": 0,
       "timestamp": DateTime.now(),
+      "date":Jiffy(DateTime.now()).yMMMMd,
       'lastUpdated': DateTime.now().millisecondsSinceEpoch,
       'lastAdded': DateTime.now().millisecondsSinceEpoch,
       "visible": 0,
@@ -81,7 +85,7 @@ class _UploadDocsState extends State<PDFDocUpload> {
         'updated': false,
         'visible': true,
         'type': 1,
-        "title":widget.code +" - "+widget.title,
+        "title":"${widget.code} - ${widget.title}",
         "timestamp": DateTime.now(),
         'time': DateTime.now().millisecondsSinceEpoch / 1000.floor(),
       });
@@ -160,8 +164,8 @@ class _UploadDocsState extends State<PDFDocUpload> {
                   : uploadFailed
                       ? "Upload Failed"
                       : "Uploading...",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-          Divider()
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const Divider()
         ],
       ),
       children: <Widget>[
@@ -176,7 +180,7 @@ class _UploadDocsState extends State<PDFDocUpload> {
                         width: 40.0,
                         height: 40.0,
                         child: Padding(
-                          padding: EdgeInsets.all(3.0),
+                          padding: const EdgeInsets.all(3.0),
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation(
                                 Theme.of(context).primaryColor),
@@ -205,13 +209,13 @@ class _UploadDocsState extends State<PDFDocUpload> {
                 size: 30,
               ),
               Text(uploadSuccess ? "10" : "0",
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 30.0,
                       color: kGrey600,
                       fontWeight: FontWeight.bold)),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           SizedBox(
@@ -221,12 +225,12 @@ class _UploadDocsState extends State<PDFDocUpload> {
                     ? message
                     : "Document already exists.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 13.0,
                     color: kGrey600,
                     fontWeight: FontWeight.bold)),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           )
         ],

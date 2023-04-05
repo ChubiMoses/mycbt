@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mycbt/src/models/doc.dart';
 import 'package:mycbt/src/screen/cbt/courses_view.dart';
 import 'package:mycbt/src/screen/search.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/screen/modal/quiz_options_modal.dart';
+import 'package:mycbt/src/widgets/cbt/course_tile.dart';
 
 class CoursesList extends StatefulWidget {
   final List<DocModel> courses;
@@ -46,11 +48,11 @@ class _CoursesListState extends State<CoursesList> {
           padding: const EdgeInsets.only(top: 10),
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
-          crossAxisCount: 2,
-          crossAxisSpacing: 10.0,
-          mainAxisSpacing: 10.0,
-          childAspectRatio: MediaQuery.of(context).size.width /
-              (MediaQuery.of(context).size.height / 2.6),
+          crossAxisCount: ResponsiveHelper.isDesktop(context) ? 3 : ResponsiveHelper.isTab(context) ? 2 : 1,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                   childAspectRatio: MediaQuery.of(context).size.width /
+                         (MediaQuery.of(context).size.height / (ResponsiveHelper.isDesktop(context) ? 1.8 : ResponsiveHelper.isTab(context) ? 3 : 4.0)),
           children: List.generate(widget.courses.length, (index) {
             String code = widget.courses[index].title!.split('-').first;
             return InkWell(
@@ -62,10 +64,9 @@ class _CoursesListState extends State<CoursesList> {
                         widget.courses[index].title!,
                       )
                     },
-                child: CourseTile(
-                  i: index,
-                  courses: widget.courses,
-                
+                child:  CBTCourseTileWidget(
+                        docModel:courses[index],
+                    
                 ));
           }),
         ),

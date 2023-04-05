@@ -3,11 +3,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
 import 'package:mycbt/src/screen/modal/earn_points_modal.dart';
 import 'package:mycbt/src/screen/profile/profile_image.dart';
 import 'package:mycbt/src/services/image_service.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/services/reward_bill_user.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
@@ -157,11 +159,13 @@ class _AskQuestionState extends State<AskQuestion> {
       body: GestureDetector(
         onTap: () => Focus.of(context).unfocus(),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(8.0),
+          padding:EdgeInsets.symmetric(
+              horizontal:ResponsiveHelper.isDesktop(context) ? 300 :
+              ResponsiveHelper.isTab(context) ? 200 : 0,),
           child: Column(
             children: <Widget>[
-              uploading ? linearProgress() : SizedBox.shrink(),
-              SizedBox(height: 10.0),
+              uploading ? linearProgress() : const SizedBox.shrink(),
+              const SizedBox(height: 10.0),
               Padding(
                 padding: EdgeInsets.all(2.0),
                 child: Row(
@@ -220,23 +224,23 @@ class _AskQuestionState extends State<AskQuestion> {
                   readOnly: uploading ? true : false,
                   controller: titleController,
                   textCapitalization: TextCapitalization.sentences,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                   // ignore: prefer__ructors
                   decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
+                      enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(color: kGrey200)),
                       filled: true,
                       fillColor: kWhite,
                       hintText: 'Title',
-                      hintStyle: TextStyle(color: Colors.grey),
+                      hintStyle: const TextStyle(color: Colors.grey),
                       border: InputBorder.none,
-                      helperText: "e.g Calculate the area of triangle",
+                      helperText: "e.g Area of triangle",
                       focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Theme.of(context).primaryColor))),
                 ),
               ),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               Padding(
                 padding: EdgeInsets.all(2.0),
                 child: TextField(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
 import 'package:mycbt/src/widgets/HeaderWidget.dart';
@@ -130,7 +130,7 @@ class AddPaymentInfo extends StatelessWidget {
                 child: Center(
                   child: Text(
                     "Save Details".toUpperCase(),
-                    style: TextStyle(color: kWhite),
+                    style: const TextStyle(color: kWhite),
                   ),
                 ),
               ),

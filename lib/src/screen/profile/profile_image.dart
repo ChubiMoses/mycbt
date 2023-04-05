@@ -1,9 +1,6 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/services/image_service.dart';
 import 'package:mycbt/src/services/users_service.dart';
@@ -101,18 +98,18 @@ class _UploadProfileImageState extends State<UploadProfileImage> {
                     radius: 70.0,
                     backgroundColor: Colors.grey[300],
                     child: IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.add_a_photo,
                           size: 40.0,
                           color: Colors.black87,
                         ),
                         onPressed: () => pickImageFromGallery()),
                   ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             file == null
                 ? ElevatedButton(
                     onPressed: () => pickImageFromGallery(),
-                    child: Text("Select Image",
+                    child: const Text("Select Image",
                         style: TextStyle(color: Colors.white)),
                     style: ButtonStyle(
                   foregroundColor:

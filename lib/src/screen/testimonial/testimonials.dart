@@ -154,44 +154,29 @@ class _WelcomeScreenState extends State<TestimonialScreen> {
                   children: <Widget>[
                     Expanded(
                       child: OutlinedButton(
-                        style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(
-                          Colors.white),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(
-                          kPrimaryColor),
-                  shape: MaterialStateProperty.all<
-                      RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24.0),
-                    ),
-                  ),
-                ),
+                         style: OutlinedButton.styleFrom(
+                          foregroundColor: kWhite,
+                          backgroundColor: kPrimaryColor,
+                            side:const BorderSide(
+                              color: kPrimaryColor,
+                            )
+                            ),
                         onPressed: () => Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => LoginRegisterPage())),
-                        child: Text("SIGN UP"),
+                        child: const Text("SIGN UP"),
                       ),
                     ),
-                    SizedBox(width: 10.0),
+                    const SizedBox(width: 10.0),
                     Expanded(
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(
-                                  Colors.white),
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(
-                                  kPrimaryColor),
-                          shape: MaterialStateProperty.all<
-                              RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24.0),
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                            side:const BorderSide(
+                              color: kPrimaryColor
+                            )
                             ),
-                          ),
-                        ),
+                                
                         onPressed: () => Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

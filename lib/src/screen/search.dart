@@ -1,11 +1,12 @@
 import 'package:mycbt/src/models/doc.dart';
-import 'package:mycbt/src/screen/cbt/courses_view.dart';
 import 'package:mycbt/src/services/courses_service.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/services/system_chrome.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/widgets/ProgressWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:mycbt/src/widgets/pdf%20widgets/pdf_docs_tile.dart';
+import 'package:mycbt/src/widgets/cbt/course_tile.dart';
+import 'package:mycbt/src/widgets/pdf%20widgets/document_tile.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -68,7 +69,7 @@ class _SearchState extends State<Search> {
     }
   }
 
-  emptyFormField() {
+  void emptyFormField() {
     searchFormFiled.clear();
   }
 
@@ -78,49 +79,15 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
 
-  Widget _searchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0.0),
-      child: SizedBox(
-        height: 35.0,
-        child: TextFormField(
-          textCapitalization: TextCapitalization.words,
-          controller: searchFormFiled,
-          style: const TextStyle(fontSize: 16.0, color: kWhite100),
-          autofocus: false,
-          decoration: InputDecoration(
-            isDense: true,
-            contentPadding: EdgeInsets.all(8.0),
-            border: const OutlineInputBorder(borderSide: BorderSide.none),
-            hintText: "Course Code",
-            hintStyle: const TextStyle(
-              color: kWhite100,
-            ),
-            filled: true,
-            focusColor: kWhite,
-            prefixIcon: const Icon(Icons.search, color: kWhite100, size: 20.0),
-            suffixIcon: IconButton(
-                onPressed: emptyFormField,
-                icon: const Icon(
-                  Icons.clear,
-                  color: kWhite100,
-                  size: 20.0,
-                )),
-          ),
-          onChanged: controlSearch,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     List<DocModel> list = searchResult.isEmpty ? coursesList : searchResult;
     systemChrome();
     return Scaffold(
         appBar: PreferredSize(
+            preferredSize: Size(MediaQuery.of(context).size.width, 100),
             child: Container(
-              height: 100,
+            //  height: 100,
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
               ),
@@ -129,54 +96,94 @@ class _SearchState extends State<Search> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 65,
                     ),
-                    _searchBar(),
+                     Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    height: 45,
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Material(
+                       elevation: 3.0,
+                        borderRadius: BorderRadius.circular(5),
+                       child: Row(
+                        children: [
+                           Expanded(
+                            child: TextField(
+                               onChanged: controlSearch,
+                                decoration:  InputDecoration(
+                                  prefixIcon: IconButton(
+                                  onPressed:()=>emptyFormField(),
+                                  icon: const Icon(
+                                    Icons.clear,
+                                    size: 20.0,
+                                  )),
+                                  border: InputBorder.none,
+                                  hintText:"Course code", hintStyle: const TextStyle(color:kGrey600)),
+                            ),
+                          ),
+                          Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(5),
+                                bottomRight: Radius.circular(5),
+                              ),
+                              color:kPrimaryColor,
+                            ),
+                            height: 46,
+                            width: 45,
+                            child: const Icon(Icons.search,
+                                color: kWhite),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                  //  _searchBar(),
                   ],
                 ),
               ),
-            ),
-            preferredSize: Size(MediaQuery.of(context).size.width, 100)),
+            )),
         backgroundColor: kBgScaffold,
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: isLoading
-              ? loader()
-              : coursesList.isEmpty
-                  ? emptyStateWidget(
-                      "Search not found.. please use course code as keyword.")
-                   : Container(
-                      child: GridView.count(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 10),
-                        shrinkWrap: true,
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10.0,
-                        mainAxisSpacing: 10.0,
-                        childAspectRatio: MediaQuery.of(context).size.width /
-                            (MediaQuery.of(context).size.height / 2.0),
-                        children: List.generate(list.length, (i) {
-                          return list[i].url! == ""
-                              ? CourseTile(
-                                  i: i,
-                                  courses: list,
-                                )
-                              : PDFDocTile(
-                                  code: list[i].code!,
-                                  title: list[i].title!,
-                                  url: list[i].url!,
-                                  firebaseId: list[i].fID!,
-                                  id: 0,
-                                  view: '',
-                                  conversation: list[i].conversation!,
-                                  readProgress: 0,
-                                  refresh: () {},
-                                  pages: 0,
-                                );
-                        }),
-                      ),
-                    ),
+        body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: isLoading
+                ? loader()
+                : coursesList.isEmpty
+                    ? emptyStateWidget(
+                        "Search not found.. please use course code as keyword.")
+                     : GridView.count(
+                       padding: const EdgeInsets.all(0),
+                       physics: const BouncingScrollPhysics(),
+                       shrinkWrap: true,
+                       crossAxisCount: ResponsiveHelper.isDesktop(context) ? 3 : ResponsiveHelper.isTab(context) ? 2 : 1,
+                       crossAxisSpacing: 10.0,
+                       mainAxisSpacing: 10.0,
+                       childAspectRatio: MediaQuery.of(context).size.width /
+                       (MediaQuery.of(context).size.height / (ResponsiveHelper.isDesktop(context) ? 1.8 : ResponsiveHelper.isTab(context) ? 3 : 3.8)),
+                       children:List.generate(list.length > 4 ? 4 : list.length, (i) {
+                         return list[i].url! == ""
+                             ? CBTCourseTileWidget(
+                                 docModel: list[i],
+                               )
+                             : DocumentTile(
+                               document: list[i],
+                                 view: '',
+                                 
+                                 refresh: () {},
+                                
+                               );
+                       }),
+                     ),
+          ),
         ));
   }
 

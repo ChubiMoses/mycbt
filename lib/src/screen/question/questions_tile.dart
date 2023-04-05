@@ -4,14 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mycbt/src/models/user.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/profile/user_info.dart';
 import 'package:mycbt/src/screen/question/report.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
 import 'package:mycbt/src/screen/question/answer_question.dart';
 import 'package:mycbt/src/screen/question/answers_view.dart';
 import 'package:mycbt/src/screen/question/edit_question.dart';
 import 'package:mycbt/src/screen/question/photo_preview.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:mycbt/src/services/notify.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
@@ -32,6 +33,7 @@ class QuestionTile extends StatefulWidget {
   final String image;
   final int answers;
   final String view;
+
   QuestionTile({
     required this.id,
     required this.username,
@@ -90,9 +92,9 @@ class _QuestionTileState extends State<QuestionTile> {
   Widget build(BuildContext context) {
     isLiked = (likeIds.contains(currentOnlineUserId) ? true : false);
     return isDeleted
-        ? SizedBox.shrink()
+        ? const SizedBox.shrink()
         : Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
             child: Container(
               color: kWhite,
               child: GestureDetector(
@@ -197,7 +199,7 @@ class _QuestionTileState extends State<QuestionTile> {
                     padding: const EdgeInsets.all(2.0),
                     child: widget.profileImage == ""
                         ? CircleAvatar(
-                            child: Icon(Icons.person, color: Colors.black54),
+                            child: const Icon(Icons.person, color: Colors.black54),
                             backgroundColor: Colors.grey[300],
                           )
                         : CircleAvatar(
@@ -213,8 +215,11 @@ class _QuestionTileState extends State<QuestionTile> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(widget.username,
-                          style: Theme.of(context).textTheme.subtitle2),
+                      SizedBox(
+                        width: 100,
+                        child: Text(widget.username,overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.subtitle2),
+                      ),
                       Row(
                         children: [
                           Icon(CupertinoIcons.suit_diamond_fill,
@@ -245,7 +250,7 @@ class _QuestionTileState extends State<QuestionTile> {
                     ? Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => LoginRegisterPage()))
+                            builder: (context) => const LoginRegisterPage()))
                     : moreAction(context,
                         userId: widget.userId,
                         id: widget.id,
@@ -258,12 +263,12 @@ class _QuestionTileState extends State<QuestionTile> {
     );
   }
 
-  tileText() {
+ Widget tileText() {
     String question = widget.question;
     if (widget.view == "homescreen") {
       if (question.length > 100) {
-        question = question.substring(0, 70);
-        question = question + "...";
+        question = question.substring(0, kIsWeb ? 40 : 70);
+        question = "$question...";
       }
     }
     if (question == "") {
@@ -374,6 +379,7 @@ class _QuestionTileState extends State<QuestionTile> {
             ),
           ),
         ),
+        widget.view == "homescreen" ? SizedBox.shrink() : 
         widget.view == "Answer"
             ? SizedBox(height: 5.0)
             : Padding(
@@ -392,13 +398,13 @@ class _QuestionTileState extends State<QuestionTile> {
                                 CachedNetworkImageProvider(currentUser!.url),
                             radius: 20.0,
                           ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
-                    Container(
+                   Container(
                       height: 35.0,
-                      width: widget.view == "homescreen"
-                          ? MediaQuery.of(context).size.width - 140
+                      width:kIsWeb ? 200 : widget.view == "homescreen" ? 
+                           MediaQuery.of(context).size.width - 170
                           : MediaQuery.of(context).size.width - 80,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4.0),
@@ -508,7 +514,7 @@ class _QuestionTileState extends State<QuestionTile> {
                               Icon(CupertinoIcons.heart_slash,
                                   color: Colors.grey),
                               SizedBox(width: 10.0),
-                              Text("Not intrested",
+                              Text("Not interested",
                                   style: Theme.of(context).textTheme.bodyText1),
                             ],
                           ),
@@ -535,42 +541,42 @@ class _QuestionTileState extends State<QuestionTile> {
                       ),
                       onPressed: () => hideAll(context),
                     ),
-              currentUser!.username == "Admin"
+              currentUser!.username == "My CBT"
                   ? SimpleDialogOption(
                       child: Column(
                         children: <Widget>[
                           Row(
                             children: <Widget>[
-                              Icon(Icons.delete, color: Colors.grey),
-                              SizedBox(width: 10.0),
+                              const Icon(Icons.delete, color: Colors.grey),
+                              const SizedBox(width: 10.0),
                               Text("Delete",
                                   style: Theme.of(context).textTheme.bodyText1),
                             ],
                           ),
-                          Divider()
+                          const Divider()
                         ],
                       ),
                       onPressed: () => deletePost(context, widget.id),
                     )
-                  : SizedBox.shrink(),
+                  : const SizedBox.shrink(),
               userId == currentOnlineUserId
                   ? SimpleDialogOption(
                       child: Column(
                         children: <Widget>[
                           Row(
                             children: <Widget>[
-                              Icon(Icons.delete, color: Colors.grey),
-                              SizedBox(width: 10.0),
+                              const Icon(Icons.delete, color: Colors.grey),
+                              const SizedBox(width: 10.0),
                               Text("Delete",
                                   style: Theme.of(context).textTheme.bodyText1),
                             ],
                           ),
-                          Divider()
+                          const Divider()
                         ],
                       ),
                       onPressed: () => deletePost(context, widget.id),
                     )
-                  : SizedBox.shrink(),
+                  : const SizedBox.shrink(),
             ],
           );
         });
@@ -603,10 +609,11 @@ class _QuestionTileState extends State<QuestionTile> {
   void deletePost(context, String id) {
     Navigator.pop(context);
     setState(() => isDeleted = true);
-    questionsRef.doc(id).update({
-      "visible": 0,
-      "lastUpdated": DateTime.now().millisecondsSinceEpoch / 1000.floor(),
-    });
+    questionsRef.doc(id).delete();
+    // questionsRef.doc(id).update({
+    //   "visible": 0,
+    //   "lastUpdated": DateTime.now().millisecondsSinceEpoch / 1000.floor(),
+    // });
     displayToast("Question deleted.");
   }
 

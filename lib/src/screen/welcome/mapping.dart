@@ -1,13 +1,10 @@
-import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:mycbt/src/models/user.dart';
 import 'package:mycbt/src/screen/welcome/splashscreen.dart';
 import 'package:mycbt/src/screen/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:mycbt/src/services/file_service.dart';
 import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:mycbt/src/services/notify.dart';
-import 'package:mycbt/src/utils/firebase_collections.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MappingPage extends StatefulWidget {
   @override
@@ -17,6 +14,7 @@ class MappingPage extends StatefulWidget {
 enum AuthStatus { welcome, homeView, isLoading }
 
 class _MappingPageState extends State<MappingPage> {
+  DocumentsDirectory documentsDirectory = DocumentsDirectory();
   FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
   AuthStatus authStatus = AuthStatus.isLoading;
   int isDynamicLink = 0;
@@ -26,37 +24,44 @@ class _MappingPageState extends State<MappingPage> {
   @override
   void initState() {
     super.initState();
-    handleView();
+  
+      handleView();
+  
+    
   }
 
   void handleView() async {
     //check if this is the first time of lauching app
-    bool exist = await firstLaunch();
-    if (!exist) {
-      await initDynamicLinks();
-      createwelcomeFile("welcome");
-      setState(() => authStatus = AuthStatus.welcome);
-    } else {
-      setState(() => authStatus = AuthStatus.homeView);
+    if(kIsWeb){
+       setState(() => authStatus = AuthStatus.homeView);
+      }else{
+        bool exist = await firstLaunch();
+        if (!exist) {
+          await initDynamicLinks();
+          createwelcomeFile("welcome");
+          setState(() => authStatus = AuthStatus.welcome);
+        } else {
+        setState(() => authStatus = AuthStatus.homeView);
     }
+  }
+
+   
     //remove splash
-    FlutterNativeSplash.remove();
   }
 
   @override
   Widget build(BuildContext context) {
     switch (authStatus) {
       case AuthStatus.welcome:
-        return WelcomeScreen();
+        return const WelcomeScreen();
       case AuthStatus.isLoading:
         return SplashScreen();
       case AuthStatus.homeView:
-        return HomeTab(
+        return const HomeTab(
           view: "",
         );
     }
   }
-
 
 //get parameters from invitation link
   Future initDynamicLinks() async {
@@ -75,8 +80,10 @@ class _MappingPageState extends State<MappingPage> {
             userId = userId;
           });
           //store referal code for future reward of 10% when currentUser subscribed
-          storeRefferalCode(referalCode);
-          storeReffererId(userId);
+          if(!kIsWeb){
+             storeReffererId(userId);
+          }
+         
         }
       }
     }).onError((error) {

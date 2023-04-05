@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:mycbt/src/screen/documents/pdf_upload.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/notification.dart';
 import 'package:mycbt/src/screen/messages/messages.dart';
 import 'package:mycbt/src/screen/referal/referal.dart';
@@ -11,9 +10,9 @@ import 'package:mycbt/src/widgets/refer_icon_widget.dart';
 
 
 
-AppBar homeAppBar(BuildContext context, VoidCallback refreshMessage, VoidCallback refreshNotification, int noteCount, int messageCount){  
+AppBar homeAppBar(BuildContext context, VoidCallback refreshMessage, VoidCallback refreshNotification, int noteCount, int messageCount, String title){  
   return AppBar(
-     title:const Text("My CBT", style: TextStyle(fontWeight: FontWeight.w700, fontSize:15),),
+     title: Text(title, style: TextStyle(fontWeight: FontWeight.w700, fontSize:15)),
      elevation: 0,
       actions: [
           Row(
@@ -27,7 +26,7 @@ AppBar homeAppBar(BuildContext context, VoidCallback refreshMessage, VoidCallbac
                             ReferralProgram())),
                child: ReferIconWidget()
                ),
-             SizedBox(width:4,),
+             const SizedBox(width:4,),
               GestureDetector(
               onTap: (){
                 if(currentUser == null){
@@ -40,21 +39,21 @@ AppBar homeAppBar(BuildContext context, VoidCallback refreshMessage, VoidCallbac
               },
               child: Stack(
                 children: [
-                  Icon(Icons.mail, size: 25, color: kWhite),
+                  const Icon(Icons.mail, size: 25, color: kWhite),
                   messageCount == 0
-                      ? SizedBox.shrink()
+                      ? const SizedBox.shrink()
                       : Positioned(
                           right: 1,
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                                  const BorderRadius.all(Radius.circular(10)),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.5),
                                   spreadRadius: 0.5,
                                   blurRadius: 10,
-                                  offset: Offset(0,
+                                  offset: const Offset(0,
                                       1), // changes position of shadow
                                 ),
                               ],
@@ -63,14 +62,14 @@ AppBar homeAppBar(BuildContext context, VoidCallback refreshMessage, VoidCallbac
                               radius: 8,
                               backgroundColor: Colors.deepOrange,
                               child: Text(messageCount.toString(),
-                                  style: TextStyle(fontSize: 8, color: kWhite)),
+                                  style: const TextStyle(fontSize: 8, color: kWhite)),
                             ),
                           ),
                         )
                 ],
               ),
             ),
-            SizedBox(width:8),
+            const SizedBox(width:8),
             GestureDetector(
               onTap: (){
                  if(currentUser == null){
@@ -83,21 +82,21 @@ AppBar homeAppBar(BuildContext context, VoidCallback refreshMessage, VoidCallbac
               },
               child: Stack(
                 children: [
-                  Icon(Icons.notifications, size: 25, color: kWhite),
+                  const Icon(Icons.notifications, size: 25, color: kWhite),
                   noteCount == 0
-                      ? SizedBox.shrink()
+                      ? const SizedBox.shrink()
                       : Positioned(
                           right: 1,
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                                  const BorderRadius.all(Radius.circular(10)),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.5),
                                   spreadRadius: 0.5,
                                   blurRadius: 10,
-                                  offset: Offset(0,
+                                  offset: const Offset(0,
                                       1), // changes position of shadow
                                 ),
                               ],
@@ -106,14 +105,14 @@ AppBar homeAppBar(BuildContext context, VoidCallback refreshMessage, VoidCallbac
                               radius: 8,
                               backgroundColor: Colors.deepOrange,
                               child: Text(noteCount.toString(),
-                                  style: TextStyle(fontSize: 8, color: kWhite)),
+                                  style: const TextStyle(fontSize: 8, color: kWhite)),
                             ),
                           ),
                         )
                 ],
               ),
             ),
-            SizedBox(width:20),
+            const SizedBox(width:20),
           ],
         ),
       ],

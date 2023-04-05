@@ -19,48 +19,46 @@ class _RateAppState extends State<UpgradeApp> {
       title: Column(
         children: <Widget>[
           Text("Update App", style: Theme.of(context).textTheme.subtitle1),
-          Divider()
+          const Divider()
         ],
       ),
       children: <Widget>[
-        Container(
-          alignment: Alignment.center,
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 20.0,
-              ),
-              Center(
-                  child: Icon(
-                CupertinoIcons.time,
-                color: Colors.grey,
-                size: 80.0,
-              )),
-              SizedBox(
-                height: 2.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Text(widget.message,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.caption),
-              ),
-            ],
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Container(
+            alignment: Alignment.center,
+            child: Column(
+              children: <Widget>[
+
+                const Center(
+                    child: Icon(
+                  CupertinoIcons.time,
+                  color: Colors.grey,
+                  size: 80.0,
+                )),
+                const SizedBox(
+                  height: 2.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: Text(widget.message,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.caption),
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+              ],
+            ),
           ),
         ),
         Container(
-          margin: EdgeInsets.all(0.0),
+          margin: EdgeInsets.symmetric(horizontal: 40),
           child: Row(
             children: <Widget>[
-              Expanded(
-                  child: TextButtonWidget(
-                      btnText: "Close",
-                      onPressed: () {
-                        widget.expired ? null : Navigator.pop(context);
-                      })),
                  Expanded(
                   child:TextButtonWidget(
-                      btnText: "Update",
+                      btnText: "UPDATE",
                        onPressed: () => launchURL(
                           "https://play.google.com/store/apps/details?id=com.ccr.mycbt"),
                           ) 

@@ -20,13 +20,12 @@ class EmptyStateWidget extends StatelessWidget {
             Icon(icon, size: 120.0, color: Colors.grey[300]),
            Text(
               title, textAlign:TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color:kGrey600),
             ),
-            SizedBox(height: 5.0,),
-          
+            const SizedBox(height: 5.0,),
           ],
         ),
       ),

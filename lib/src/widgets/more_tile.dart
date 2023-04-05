@@ -21,10 +21,10 @@ class MoreCard extends StatelessWidget {
           children: [
             Text(
               title.toUpperCase(),
-              style:  TextStyle(
-                  fontSize: 12, fontWeight: FontWeight.w600, color: kBlack),
+              style:  const TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.bold, color: kBlack),
             ),
-            GestureDetector(
+            InkWell(
               onTap: press,
               child: Row(
                 children:  [

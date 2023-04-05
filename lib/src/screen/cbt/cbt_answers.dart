@@ -5,6 +5,7 @@ import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:mycbt/src/screen/question/photo_preview.dart';
 import 'package:mycbt/src/services/ads_service.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/widgets/HeaderWidget.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,9 +32,12 @@ class _CBTAnswersState extends State<CBTAnswers> {
   int total;
   _CBTAnswersState(this.score, this.total);
   Map<String, BannerAd> ads = <String, BannerAd>{};
+ 
 
   bool adShown = true;
-
+   @override
+  
+  
   Widget answerButton(String answer, String userAnswer) {
     return answer == userAnswer
         ? answerWidget(answer)
@@ -48,7 +52,7 @@ class _CBTAnswersState extends State<CBTAnswers> {
                   Container(
                     constraints: BoxConstraints(maxWidth: 200.0),
                     child: Material(
-                      color: Colors.orange,
+                      color:kSecondaryColor,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0, vertical: 4.0),
@@ -74,7 +78,7 @@ class _CBTAnswersState extends State<CBTAnswers> {
         Container(
           constraints: BoxConstraints(maxWidth: 200.0),
           child: Material(
-            color: Colors.lightGreen,
+            color: Theme.of(context).primaryColor,
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -117,8 +121,11 @@ class _CBTAnswersState extends State<CBTAnswers> {
       child: Scaffold(
         appBar: header(context, strTitle: "Answers"),
         body: Container(
-          height: double.infinity,
-          width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal:
+             ResponsiveHelper.isDesktop(context) ? 300 :
+             ResponsiveHelper.isTab(context) ? 200 : 0
+             ),
           child: Column(
             children: <Widget>[
               ListTile(
@@ -132,7 +139,8 @@ class _CBTAnswersState extends State<CBTAnswers> {
                   scrollDirection: Axis.vertical,
                   itemCount: widget.quiz.length,
                   separatorBuilder: (context, i) {
-                    ads['myBanner$i'] = BannerAd(
+                    if(ResponsiveHelper.isMobilePhone()){
+                      ads['myBanner$i'] = BannerAd(
                         size: AdSize.banner,
                         adUnitId: AdHelper.bannerAdUnitId,
                         listener: BannerAdListener(
@@ -152,8 +160,14 @@ class _CBTAnswersState extends State<CBTAnswers> {
                         ],
                       );
                     }
-
                     return SizedBox.shrink();
+                    }else{
+                      
+                    }
+                     
+                   
+                    return SizedBox.shrink();
+
                   },
                   itemBuilder: (BuildContext context, int index) {
                     return Container(

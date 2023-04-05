@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:mycbt/src/models/user.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/question/photo_preview.dart';
 import 'package:mycbt/src/services/notify.dart';
 import 'package:mycbt/src/services/referal_reward.dart';
@@ -17,7 +17,10 @@ import 'package:mycbt/src/widgets/new_sub_tile.dart';
 import 'package:uuid/uuid.dart';
 
 class ApproveSubScreen extends StatefulWidget {
+  const ApproveSubScreen({Key? key}) : super(key: key);
+
   @override
+  // ignore: library_private_types_in_public_api
   _ApproveSubscriptionState createState() => _ApproveSubscriptionState();
 }
 
@@ -78,6 +81,13 @@ class _ApproveSubscriptionState extends State<ApproveSubScreen> {
         document.reference.delete();
       }
     });
+
+     activeSubReference.doc(ownerId).get().then((document) {
+      if (document.exists) {
+        document.reference.delete();
+      }
+    });
+    
     storageReference.child("sub_$subId.jpg").delete();
     fetchNewSub();
   }
@@ -87,12 +97,11 @@ class _ApproveSubscriptionState extends State<ApproveSubScreen> {
         context: mContext,
         builder: (context) {
           return SimpleDialog(
-            title: Text("Are sure you want to delete?",
-                style:
-                    TextStyle(color: kBlack400, fontWeight: FontWeight.bold)),
+            title: const Text("Are sure you want to delete?",
+                style:TextStyle(color: kBlack400, fontWeight: FontWeight.bold)),
             children: <Widget>[
               SimpleDialogOption(
-                child: Text("Delete", style: TextStyle(color: Colors.black)),
+                child: const Text("Delete", style: TextStyle(color: Colors.black)),
                 onPressed: () {
                   Navigator.pop(context);
                   usersReference.doc(ownerId).get().then((value) {
@@ -122,12 +131,12 @@ class _ApproveSubscriptionState extends State<ApproveSubScreen> {
         context: mContext,
         builder: (context) {
           return SimpleDialog(
-            title: Text("Are sure you want to approve?",
+            title: const Text("Are sure you want to approve?",
                 style:
                     TextStyle(color: kBlack400, fontWeight: FontWeight.bold)),
             children: <Widget>[
               SimpleDialogOption(
-                child: Text("Approve", style: TextStyle(color: Colors.black)),
+                child: const Text("Approve", style: TextStyle(color: Colors.black)),
                 onPressed: () {
                   Navigator.pop(context);
                   approveSub(subId, ownerId, device, code);
@@ -148,7 +157,7 @@ class _ApproveSubscriptionState extends State<ApproveSubScreen> {
               ? EmptyStateWidget("No manual subscription at the moment.",
                   CupertinoIcons.money_dollar_circle)
               : Container(
-                  margin: EdgeInsets.all(5),
+                  margin: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     color: ColorResources.COLOR_WHITE,
                     borderRadius: BorderRadius.circular(8),
@@ -157,23 +166,23 @@ class _ApproveSubscriptionState extends State<ApproveSubScreen> {
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 2,
                         blurRadius: 20,
-                        offset: Offset(3, 3), // changes position of shadow
+                        offset: const Offset(3, 3), // changes position of shadow
                       ),
                     ],
                   ),
                   child: ListView.builder(
                     itemCount: sub.length,
-                    padding: EdgeInsets.all(0),
-                    physics: BouncingScrollPhysics(),
+                    padding: const EdgeInsets.all(0),
+                    physics: const BouncingScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           NewSubTile(
-                            title: "${sub[index].school}",
-                            orderNo: "${sub[index].name}",
-                            date: "${sub[index].date}",
-                            amount: "${sub[index].phone}",
+                            title: sub[index].school,
+                            orderNo: sub[index].name,
+                            date: sub[index].date,
+                            amount: sub[index].phone,
                             status:
                                 sub[index].approved ? "Approved" : "Pending",
                           ),
@@ -204,7 +213,7 @@ class _ApproveSubscriptionState extends State<ApproveSubScreen> {
                               
 
                               IconButton(
-                                  icon: Icon(Icons.copy),
+                                  icon: const Icon(Icons.copy),
                                   onPressed: () {
                                     Clipboard.setData(
                                         ClipboardData(text: sub[index].phone));

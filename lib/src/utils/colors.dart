@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-const kPrimaryColor  = Color(0xFF4CAF50);//8BC348
-const kSecondaryColor = Color(0xFFBFD834); //22577A
+const kPrimaryColor  =  Color(0xff05A95C);//8BC348
+const kSecondaryColor = Color(0xfffea400); //22577A
 const kBlueGrey = Colors.blueGrey;
 const kBgScaffold = Color(0xfff7f6fb);
 const kPrimaryColor1 = Color(0xFF374B4A);
@@ -22,7 +22,7 @@ const kGrey200 = Color(0xFFEBEDF0);
 const kGrey100 = Color(0xFFF0F2F5);
 
 final kDefaultShadow = BoxShadow(
-    offset: Offset(0, 0), blurRadius: 2, color: Colors.grey.withOpacity(0.2));
+    offset: const Offset(0, 0), blurRadius: 2, color: Colors.grey.withOpacity(0.2));
 
 class ColorResources {
   static const Color COLOR_PRIMARY = Color(0xff387AF6);

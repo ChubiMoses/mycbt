@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/widgets/buttons.dart';
 
@@ -30,27 +31,28 @@ final textControllerResult = TextEditingController();
   Widget build(BuildContext context) {
     return  SingleChildScrollView(
       child: Container(
+        padding:  EdgeInsets.symmetric(horizontal: ResponsiveHelper.isDesktop(context) ? 250 : 0),
         width: double.infinity,
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(30), topRight: Radius.circular(30))),
             child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Container(
+              SizedBox(
                 height:45.0,
                 child:Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 150.0,
-                    child: new TextField(
-                    decoration: new InputDecoration.collapsed(
+                    child: TextField(
+                    decoration:  const InputDecoration.collapsed(
                       hintText: "0",
                       hintStyle: TextStyle(color:Colors.white)
                     ),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                        // color:Colors.white,
                          fontWeight: FontWeight.bold
@@ -151,7 +153,7 @@ final textControllerResult = TextEditingController();
     return Container(
       padding: EdgeInsets.only(bottom: 5.0),
       child: TextButton(
-        child: Icon(Icons.backspace, size: 28, color: Colors.blueGrey),
+        child: Icon(Icons.backspace, size: 20, color: kWhite),
         onPressed: () {
           textControllerInput.text = (textControllerInput.text.length > 0)
               ? (textControllerInput.text
@@ -168,7 +170,7 @@ final textControllerResult = TextEditingController();
                   shape: MaterialStateProperty.all<
                       RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24.0),
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
                 ),
@@ -191,7 +193,7 @@ final textControllerResult = TextEditingController();
     return ElevatedButton(
       child: Text(
         btnText,
-        style: TextStyle(fontSize: 35.0, color:Colors.black),
+        style: const TextStyle(fontSize: 20.0, color:kWhite),
       ),
      // color:Colors.lightGreen,
       onPressed: () {

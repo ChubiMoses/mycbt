@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mycbt/src/screen/documents/pdf_upload.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/subscription/subscription_screen.dart';
 import 'package:mycbt/src/services/ads_service.dart';
@@ -122,7 +123,7 @@ class _EarnPointsModalState extends State<EarnPointsModal> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     GestureDetector(
@@ -156,7 +157,7 @@ class _EarnPointsModalState extends State<EarnPointsModal> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     GestureDetector(

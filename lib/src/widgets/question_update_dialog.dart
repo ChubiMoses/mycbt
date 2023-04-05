@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:mycbt/src/services/questions_service.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/utils/network_utils.dart';
-import 'package:mycbt/src/widgets/buttons.dart';
 import 'package:mycbt/src/widgets/displayToast.dart';
 import 'package:flushbar/flushbar.dart';
 
@@ -18,26 +17,19 @@ dynamic downloadModal(mContext, String course, String school) {
           ),
           children: <Widget>[
             const Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.symmetric(horizontal: 40,vertical: 10),
               child: Center(
                 child: Text(
-                    "This course requires an update. \nThereafter, you can practice it offline.",
+                    "This course requires an update. Thereafter, you can practice it offline.",textAlign: TextAlign.center,
                     style:
                         TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
               ),
             ),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              TextButtonWidget(
-                  btnText: "Later",
-                  onPressed: () async {
-                    Navigator.pop(context);
-                  }),
-              SizedBox(
-                width: 10.0,
-              ),
-              TextButtonWidget(
-                  btnText: "Update",
-                  onPressed: () async {
+              Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child:InkWell(
+                    onTap: () async {
                     final result = await checkConnetion();
                     if (result == 0) {
                       displayToast("No internet connection");
@@ -65,8 +57,29 @@ dynamic downloadModal(mContext, String course, String school) {
                           color: Colors.white,
                         ),
                       ).show(context);
-                    }
-                  })
+                    }},
+                      child: Container(
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 70.0, vertical: 10),
+                          child: Center(
+                            child: Text("UPDATE",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: kWhite)),
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(5)
+                        ),
+                        
+                      ),
+                    ),
+                     
+                          
+                )
+             
             ])
           ],
         );

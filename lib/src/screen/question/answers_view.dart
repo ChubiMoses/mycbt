@@ -6,6 +6,7 @@ import 'package:mycbt/src/models/question.dart';
 import 'package:mycbt/src/screen/question/answer_tile.dart';
 import 'package:mycbt/src/screen/question/questions_tile.dart';
 import 'package:mycbt/src/services/ads_service.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/services/user_online_checker.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
@@ -31,8 +32,8 @@ class _QuestionViewState extends State<QuestionView> {
   initState() {
     super.initState();
     updateLastSeen();
-    
-    _bannerAd = BannerAd(
+     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        _bannerAd = BannerAd(
         size: AdSize.mediumRectangle,
         adUnitId: AdHelper.bannerAdUnitId,
         listener: BannerAdListener(onAdLoaded: (_) {
@@ -46,6 +47,8 @@ class _QuestionViewState extends State<QuestionView> {
         request: const AdRequest())
       ..load();
 
+    });
+   
     getQuestion();
     super.initState();
   }
@@ -85,6 +88,10 @@ class _QuestionViewState extends State<QuestionView> {
         body: isLoading
             ? loader()
             : SingleChildScrollView(
+              padding:EdgeInsets.symmetric(
+              horizontal:ResponsiveHelper.isDesktop(context) ? 300 :
+              ResponsiveHelper.isTab(context) ? 200 : 0, vertical: ResponsiveHelper.isMobilePhone() ? 0 : 20,
+             ),
               physics: BouncingScrollPhysics(),
                 child: Column(children: [
                   QuestionTile(

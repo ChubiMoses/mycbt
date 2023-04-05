@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:mycbt/src/models/doc.dart';
 import 'package:mycbt/src/models/docs.dart';
+import 'package:mycbt/src/models/user.dart';
 import 'package:mycbt/src/screen/documents/download_courses.dart';
 import 'package:mycbt/src/services/file_service.dart';
+import 'package:mycbt/src/services/hide_content.dart';
+import 'package:mycbt/src/services/users_service.dart';
 import 'package:mycbt/src/utils/docs_db.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
 import 'package:mycbt/src/utils/courses_db_helper.dart';
@@ -36,6 +40,18 @@ Future<void> updateCouses() async {
   saveOffline(courses);
 }
 
+Future<List<DocModel>> getCBTCourses(int limit)async{
+  QuerySnapshot query = await cbtCoursesRef.limit(limit).get();
+    return  query.docs.map((documentSnapshot) => DocModel.fromDocument(documentSnapshot)).toList();
+}
+
+
+Future<List<DocModel>> getCourses(int limit)async{
+  QuerySnapshot query = await studyMaterialsRef.limit(limit).get();
+    return  query.docs.map((documentSnapshot) => DocModel.fromDocument(documentSnapshot)).toList();
+}
+
+
 //listen for changes made to documents on the server
 void updateChanges() async {
   String timestamp;
@@ -61,17 +77,19 @@ void updateChanges() async {
   }
   courses.forEach((e) async {
     DocModel data = DocModel(
-        fID: e.fID,
-        likeIds: e.likeIds,
-        ownerId: e.ownerId,
-        visible: e.visible,
-        category: e.category,
-        bytes: e.bytes,
-        code: e.code,
-        conversation: e.conversation,
-        title: e.title,
-        school: e.school,
-        url: e.url);
+          fID: e.fID,
+          username:e.username,
+          ownerImage: e.ownerImage,
+          ratings: e.ratings,
+          ownerId: e.ownerId,
+          visible: e.visible,
+          category: e.category,
+          bytes: e.bytes,
+          code: e.code,
+          conversation: e.conversation,
+          title: e.title,
+          school: e.school,
+          url: e.url);
 
     await databaseHelper.updateChanges(data);
   });
@@ -99,16 +117,40 @@ Future<void> donwloadCourses() async {
 
 Future<void> clearCourses() async {
   await databaseHelper.truncateCourses();
- 
-
 }
 
 Future<void> saveOffline(List<DocModel> course) async {
   course.forEach((e) async {
-    if (e.visible == 1) {
-      DocModel data = DocModel(
+    if ( e.visible == 1) {
+      if(e.dateUploaded == "" && e.bytes != 0){
+      UserModel user = await userDetails(e.ownerId!) as UserModel;
+       studyMaterialsRef.doc(e.fID).set({
+        "id": e.id,
+        "ownerId": e.ownerId,
+        "username":user.username,
+        "ownerImage":user.url,
+        "school": e.school,
+        "title": e.title,
+        "originalTitle":e.originalTitle,
+        "bytes": e.bytes,
+        "ratings":'5,',
+        "likeIds": "",
+        "conversation": 0,
+        "dateUploaded":Jiffy(DateTime.now()).yMMMMd,
+        "timestamp": DateTime.now(),
+        'lastUpdated': DateTime.now().millisecondsSinceEpoch,
+        'lastAdded': DateTime.now().millisecondsSinceEpoch,
+        "visible": e.visible,
+        "favorite":e.favorite,
+        "url":e.url,
+        "category": e.category,
+        "code":e.code,
+      });
+       DocModel data = DocModel(
           fID: e.fID,
-          likeIds: e.likeIds,
+          username:e.username,
+          ownerImage: e.ownerImage,
+          ratings: e.ratings,
           ownerId: e.ownerId,
           visible: e.visible,
           category: e.category,
@@ -117,8 +159,29 @@ Future<void> saveOffline(List<DocModel> course) async {
           conversation: e.conversation,
           title: e.title,
           school: e.school,
+           dateUploaded: e.dateUploaded,
           url: e.url);
-      await databaseHelper.insertCourse(data);
+
+          await databaseHelper.insertCourse(data);
+    }else{
+        DocModel data = DocModel(
+          fID: e.fID,
+          username:e.username,
+          ownerImage: e.ownerImage,
+          ratings: e.ratings,
+          ownerId: e.ownerId,
+          visible: e.visible,
+          category: e.category,
+          dateUploaded: e.dateUploaded,
+          bytes: e.bytes,
+          code: e.code,
+          conversation: e.conversation,
+          title: e.title,
+          school: e.school,
+          url: e.url);
+
+          await databaseHelper.insertCourse(data);
+      }
     }
   });
 }
@@ -137,12 +200,20 @@ Future<List<DocModel>> fetchCourses() async {
 
 Future<List<DocModel>> getCoursesList(BuildContext context) async {
   List<DocModel> courses = [];
+  //contents hidden by user
+  List huddenUserIds = [];
+  List<Content> contents = await HideContentService().getHiddenContent();
+  contents.forEach((element) {
+    huddenUserIds.add(element.id);
+  });
 
   List<DocModel> temp = await fetchCourses();
   if (temp.isNotEmpty) {
     temp.shuffle();
     temp.forEach((element) {
-      courses.add(element);
+       if(!huddenUserIds.contains(element.ownerId) ){
+          courses.add(element);
+       }
     });
 
     //check if new courses has been added to firebase
@@ -154,7 +225,9 @@ Future<List<DocModel>> getCoursesList(BuildContext context) async {
   } else {
     SnackBar snackBar =
         const SnackBar(content: Text("Internet connection required."));
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    // ignore: use_build_context_synchronously
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => ContentUpdate()));
   }

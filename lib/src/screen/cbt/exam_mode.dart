@@ -1,12 +1,14 @@
 import 'dart:async';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mycbt/src/models/questions.dart';
-import 'package:mycbt/src/screen/cbt/cbt_answers.dart';
+import 'package:mycbt/src/models/quiz.dart';
 import 'package:mycbt/src/screen/cbt/splash.dart';
 import 'package:mycbt/src/screen/home_tab.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/question/photo_preview.dart';
+import 'package:mycbt/src/services/ads_service.dart';
 import 'package:mycbt/src/services/exam_questions_service.dart';
 import 'package:mycbt/src/services/questions_service.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:mycbt/src/screen/modal/Ads_modal2.dart';
 import 'package:mycbt/src/widgets/ProgressWidget.dart';
@@ -20,7 +22,7 @@ class CBTScreen extends StatefulWidget {
   final String school;
   final String course;
   final String subject;
-  final String category;
+  final String questions;
   final String duration;
   final String code;
   final String year;
@@ -32,7 +34,7 @@ class CBTScreen extends StatefulWidget {
       required this.year,
       required this.subject,
       required this.duration,
-      required this.category});
+      required this.questions});
 
   @override
   _CBTScreenState createState() => _CBTScreenState();
@@ -58,28 +60,80 @@ class _CBTScreenState extends State<CBTScreen> {
   bool displayGoto = false;
   Timer? timer;
   List<String> options = [];
-
+   bool adReady = false;
+  late BannerAd _bannerAd;
+   late InterstitialAd _interstitialAd;
+  bool _isInterstitialAdReady = false;
+  
   @override
   void initState() {
     super.initState();
+      InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          _isInterstitialAdReady = true;
+        }, onAdFailedToLoad: (LoadAdError error) {
+          print("failed to Load Interstitial Ad ${error.message}");
+        }));
 
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      fetchQuestions();
+      loadAds();
+    });
     getDuration(widget.code);
-
-    fetchQuestions();
-
   }
+
+  void loadAds(){
+      setState(() {
+         _bannerAd = BannerAd(
+          size: AdSize.banner,
+          adUnitId: AdHelper.bannerAdUnitId,
+          listener: BannerAdListener(onAdLoaded: (_) {
+              adReady = true;
+            
+          }, onAdFailedToLoad: (ad, LoadAdError error) {
+            adReady = false;
+            ad.dispose();
+          }),
+          request: const AdRequest())
+        ..load();
+      });
+     }
+  
 
   void getDuration(String code) {
     duration = 60 * int.parse(widget.duration);
   }
 
   void fetchQuestions() async {
-    dbQuestions = await fetchAllQuestions();
+    if (!ResponsiveHelper.isDesktop(context)) {
+      dbQuestions = await fetchAllQuestions();
+      questions = await fetchQuizQuestion(dbQuestions:dbQuestions, schoolName: widget.school, course: widget.course, studyMode: false, numberOfQuestions:int.parse(widget.questions));
+    } else {
+      setState(() => displayGoto = true);
+      List<Quiz> questionList =
+          await getQuestions(widget.school, widget.course, int.parse(widget.questions));
+      for (var data in questionList) {
+        questions.add(QuizModel(
+            question: data.question,
+            option1: data.option1,
+            option2: data.option2,
+            option3: data.option3,
+            answer: data.answer,
+            firebaseId: data.id,
+            year: data.year,
+            subject: data.subject,
+            school: data.school,
+            code: data.code,
+            image: data.image,
+            category: data.category,
+            course: data.course));
+      }
+    }
 
-    questions = await fetchQuizQuestion(
-        dbQuestions, widget.school, widget.year, widget.course);
-
-    if (questions.length < 10) {
+    if (questions.length < 1) {
       Navigator.of(context).pop("exit");
     }
 
@@ -113,8 +167,8 @@ class _CBTScreenState extends State<CBTScreen> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => CongratulationSplash(widget.year, widget.course,
-                      marks, count, userAnswers, questions)));
+                  builder: (context) => CongratulationSplash(widget.year,
+                      widget.course, marks, count, userAnswers, questions)));
         } else {
           duration = duration - 1;
         }
@@ -124,7 +178,7 @@ class _CBTScreenState extends State<CBTScreen> {
         int minutesLeft = ((hoursLeft) - (hours * 3600)).floor();
         int minutes = (minutesLeft / 60).floor();
         int seconds = (duration % 60).floor();
-        showTimer = formartString("$minutes") + ":" + formartString("$seconds");
+        showTimer = "${formartString("$minutes")}:${formartString("$seconds")}";
       });
     });
   }
@@ -153,6 +207,7 @@ class _CBTScreenState extends State<CBTScreen> {
   }
 
   void nextQuestion() {
+    loadAds();
     if (_value != '') {
       setState(() {
         if (i + 1 < count) {
@@ -233,90 +288,110 @@ class _CBTScreenState extends State<CBTScreen> {
   @override
   Widget build(BuildContext context) {
     incCount = i + 1;
-     String title = "";
-    if (widget.year == "Year") {
-      title = widget.code;
-    } else {
-      title = widget.code + widget.year;
-    }
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0.0,
-        title: Text(
-          title,
-          style: TextStyle(
-              fontWeight: FontWeight.w600, color: Colors.white, fontSize: 16.0),
+    return WillPopScope(
+      onWillPop:()async{
+            _isInterstitialAdReady ? await _interstitialAd.show() : null;
+         return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          automaticallyImplyLeading:ResponsiveHelper.isMobilePhone() ? true : false ,
+          centerTitle: ResponsiveHelper.isMobilePhone() ? false : true,
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Theme.of(context).primaryColor,
+          elevation: 0.0,
+          title: Text(
+            widget.code,
+            style: const TextStyle(
+                fontWeight: FontWeight.w600, color: Colors.white, fontSize: 16.0),
+          ),
+          actions: <Widget>[
+            IconButton(
+                icon: const Icon(Icons.calculate),
+                onPressed: () => myCalculator(context)),
+          ],
         ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.calculate),
-              onPressed: () => myCalculator(context)),
-        ],
-      ),
-      body: isLoading
-          ? loader()
-          : SingleChildScrollView(
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      margin: EdgeInsets.all(0.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        body: isLoading
+            ? loader()
+            : SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+                child: Container(
+                   padding:EdgeInsets.symmetric(
+                   horizontal:ResponsiveHelper.isDesktop(context) ? 300 :
+                   ResponsiveHelper.isTab(context) ? 200 : 0, vertical: ResponsiveHelper.isMobilePhone() ? 0 : 20,
+               ),
+                  color: Colors.white,
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Text('Question $incCount   of    Question $count'),
+                              Text(showTimer,
+                                  style: const TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w500)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 4.0),
+                        child: KaTeX(
+                          laTeXCode: Text(questions[i].question!,
+                              softWrap: true,
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 20.0)),
+                        ),
+                      ),
+                      Container(
+                        color: Colors.white,
+                        child: Column(
                           children: <Widget>[
-                            Text('Question $incCount   of    Question $count'),
-                            Text('$showTimer',
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.w500)),
+                            questions[i].image == ""
+                                ? const SizedBox.shrink()
+                                : GestureDetector(
+                                    onTap: () => photoPreview(
+                                        context, questions[i].image!),
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 200.0,
+                                      decoration: BoxDecoration(
+                                          color: kGrey300,
+                                          image: DecorationImage(
+                                              image: CachedNetworkImageProvider(
+                                                  questions[i].image!),
+                                              fit: BoxFit.contain)),
+                                    ),
+                                  ),
+                            Container(
+                              child: optionsButtons(),
+                            ),
                           ],
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 4.0),
-                      child: KaTeX(
-                        laTeXCode: Text(questions[i].question!,
-                            softWrap: true,
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 20.0)),
-                      ),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      child: Column(
-                        children: <Widget>[
-                          questions[i].image == ""
-                              ? const SizedBox.shrink()
-                              : GestureDetector(
-                                  onTap: () => photoPreview(
-                                      context, questions[i].image!),
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 200.0,
-                                    decoration: BoxDecoration(
-                                        color: kGrey300,
-                                        image: DecorationImage(
-                                            image: CachedNetworkImageProvider(
-                                                questions[i].image!),
-                                            fit: BoxFit.contain)),
-                                  ),
-                                ),
-                          Container(
-                            child: optionsButtons(),
-                          ),
-                        ],
-                      ),
-                    ),
-                    displayGoto
+                     const SizedBox(height:200,)
+                    ],
+                  ),
+                ),
+              ),
+            bottomSheet: isLoading
+            ? const SizedBox.shrink()
+            : Container(
+              height: 140,
+              color: kWhite,
+              padding:EdgeInsets.symmetric(
+                    horizontal:ResponsiveHelper.isDesktop(context) ? 300 :
+                    ResponsiveHelper.isTab(context) ? 200 : 0,
+                  ),
+              child: Column(
+                children: [
+                   displayGoto
                         ? Container(
                             alignment: Alignment.centerLeft,
                             height: 30.0,
@@ -338,7 +413,10 @@ class _CBTScreenState extends State<CBTScreen> {
                                             ];
                                             options.shuffle();
                                             setState(() => options = options);
-                                            displayGoto = false;
+                                            if(!ResponsiveHelper.isDesktop(context)){
+                                                displayGoto = false;
+                                            } 
+                                           
                                           });
                                         } else {
                                           displayToast("Please activate");
@@ -356,72 +434,103 @@ class _CBTScreenState extends State<CBTScreen> {
                                                   : Colors.lightGreen),
                                           child: Center(
                                               child: Text("${index + 1}",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       color: Colors.white)))));
                                 }),
                           )
-                        : Text(""),
-                  ],
-                ),
-              ),
-            ),
-      bottomNavigationBar: isLoading
-          ? SizedBox.shrink()
-          : Card(
-              margin: EdgeInsets.all(0.0),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => showGoto(),
-                      child: Container(
-                        color: Colors.grey[300],
-                        
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: const <Widget>[
-                            Icon(Icons.select_all),
-                            Text("Go to", style: TextStyle(color: Colors.black87,),),
-                          ],
+                        : const Text(""),
+                     SizedBox(height: 10,),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => showGoto(),
+                          child: Container(
+                            color: Colors.grey[300],
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: const <Widget>[
+                                Icon(Icons.select_all),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Go to",
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: i == 0 ? null : () => prevQuestion(),
+                          child: Container(
+                              color: kSecondaryColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                // ignore: prefer_const_literals_to_create_immutables
+                                children: <Widget>[
+                                  const Icon(
+                                    Icons.arrow_back,
+                                    color: kWhite,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "Prev",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ),
+                      ),
+                      const SizedBox(width: 2.0),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            showSubAlert ? adsModel2(context) : nextQuestion();
+                          },
+                          child: Container(
+                              color: Theme.of(context).primaryColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: const <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "Next",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward,
+                                    color: kWhite,
+                                  )
+                                ],
+                              )),
+                        ),
+                      )
+                    ],
                   ),
-                  Expanded(
-                    child: InkWell(
-                     onTap: i == 0 ? null : () => prevQuestion(),
-                      child: Container(
-                          color: kSecondaryColor,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            // ignore: prefer_const_literals_to_create_immutables
-                            children: <Widget>[
-                              const Icon(Icons.arrow_back),
-                              const Text("Prev", style: TextStyle(color: Colors.white),),
-                            ],
-                          )),
-                    ),
-                  ),
-                  const SizedBox(width: 2.0),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                          showSubAlert ? adsModel2(context) : nextQuestion();
-                        },
-                      child: Container(
-                          color: Theme.of(context).primaryColor,                        
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: const <Widget>[
-                              Text("Next", style: TextStyle(color:  Colors.white,),),
-                              Icon(Icons.arrow_forward)
-                            ],
-                          )),
-                    ),
-                  )
+                  SizedBox(height: 3,),
+                   adReady
+                  ? SizedBox(
+                      height: _bannerAd.size.height.toDouble(),
+                      width: _bannerAd.size.width.toDouble(),
+                      child: AdWidget(ad: _bannerAd),
+                    )
+                  : const SizedBox.shrink(),
                 ],
               ),
             ),
+      ),
     );
   }
 

@@ -3,7 +3,7 @@ import 'package:mycbt/src/models/questions.dart';
 
 List<QuizModel> questions = [];
 int count = 0;
-final _random = new Random();
+final _random = Random();
 
 Future<int> questionAvailable(
     List<QuizModel> dbQuestions, String course) async {
@@ -16,41 +16,42 @@ Future<int> questionAvailable(
   return count;
 }
 
-Future<List<QuizModel>> fetchQuizQuestion(List<QuizModel> dbQuestions,
-    String schoolName, String year, String course) async {
+Future<List<QuizModel>> fetchQuizQuestion({required List<QuizModel> dbQuestions, required int numberOfQuestions,
+   required String schoolName,required  String course, required bool studyMode}) async {
   questions = [];
-
+  
   dbQuestions.forEach((element) {
-    //filter along with year if school Q&A is available in years else dont(FUTMINA)
-
-    if (year != null) {
-      if (element.school == schoolName &&
-          element.year == year &&
+    if(schoolName == "Federal University of Technology Minna"){
+        if (element.school == schoolName &&
+                  element.course == course) {
+                questions.add(element);
+              } 
+    }else{
+       if (element.school == schoolName &&
           element.course == course) {
-        questions.add(element);
-      }
-    } else {
-      if (element.school == schoolName && element.course == course) {
-        questions.add(element);
-      }
+         questions.add(element);
+       } 
     }
+     
   });
 
   if (questions.length <= 5) {
-    questions = await randomSelect(dbQuestions, schoolName, year, course);
+    questions = await randomSelect(dbQuestions, schoolName,  course, numberOfQuestions);
     return questions;
   } else {
-    if (schoolName == "Federal University of Technology Minna") {
-      questions = List.generate(
-          60, (_) => questions[_random.nextInt(questions.length)]);
+     if(studyMode){
+          return questions;
+     }else{
+         questions = List.generate(
+          numberOfQuestions, (_) => questions[_random.nextInt(questions.length)]);
     }
-
+      
     return questions;
   }
 }
 
 Future<List<QuizModel>> randomSelect(List<QuizModel> dbQuestions,
-    String schoolName, String year, String course) async {
+    String schoolName,  String course, int numberOfQuestions) async {
   questions = [];
 
   dbQuestions.forEach((element) {
@@ -64,7 +65,7 @@ Future<List<QuizModel>> randomSelect(List<QuizModel> dbQuestions,
   } else {
     //questions = List.generate(35, (_) => questions..shuffle()).first;
     questions =
-        List.generate(35, (_) => questions[_random.nextInt(questions.length)]);
+        List.generate(numberOfQuestions, (_) => questions[_random.nextInt(questions.length)]);
     final ids = questions.map((e) => e.firebaseId).toSet();
     questions.retainWhere((x) => ids.remove(x.firebaseId));
 

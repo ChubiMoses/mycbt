@@ -1,7 +1,6 @@
 import 'package:mycbt/src/models/doc.dart';
 import 'package:mycbt/src/models/user.dart';
 import 'package:mycbt/src/screen/admin/typing/rename_course.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/services/notify.dart';
 import 'package:mycbt/src/services/reward_bill_user.dart';
@@ -14,7 +13,10 @@ import 'package:mycbt/src/widgets/pdf%20widgets/pdf_docs_tile.dart';
 import 'package:uuid/uuid.dart';
 
 class ApproveDocs extends StatefulWidget {
+  const ApproveDocs({Key? key}) : super(key: key);
+
   @override
+  // ignore: library_private_types_in_public_api
   _AddCoursesState createState() => _AddCoursesState();
 }
 
@@ -56,8 +58,8 @@ class _AddCoursesState extends State<ApproveDocs> {
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.separated(
                     itemCount: courses.length,
-                    physics: BouncingScrollPhysics(),
-                    separatorBuilder: (context, i) => Divider(
+                    physics: const BouncingScrollPhysics(),
+                    separatorBuilder: (context, i) => const Divider(
                           height: 2,
                         ),
                     itemBuilder: (BuildContext context, int i) {
@@ -87,16 +89,14 @@ class _AddCoursesState extends State<ApproveDocs> {
                                     ? Theme.of(context).primaryColor
                                     : kWhite,
                                 child:IconButton(onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>RenameCourse(courses[i])))
-                                , icon: Icon(Icons.edit)),
+                                , icon: const Icon(Icons.edit)),
                               ),
                               contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 10),
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               isThreeLine: true,
                               title: Text(
-                                courses[i].code!.toUpperCase() +
-                                    " - " +
-                                    courses[i].title!,
-                                style: TextStyle(fontSize: 14),
+                                "${courses[i].code!.toUpperCase()} - ${courses[i].title!}",
+                                style: const TextStyle(fontSize: 14),
                               ),
                               subtitle: Text(courses[i].school!),
                               trailing: IconButton(

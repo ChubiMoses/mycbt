@@ -16,11 +16,11 @@ class TextButtonWidget extends StatelessWidget {
         backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
+            borderRadius: BorderRadius.circular(5.0),
           ),
         ),
       ),
-      onPressed: () => onPressed,
+      onPressed:onPressed,
       child: Text(btnText,
           style: const TextStyle(fontWeight: FontWeight.w600, color: kWhite)),
     );
@@ -38,17 +38,17 @@ class OutlinedButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-        backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
+        foregroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
+        
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
+            borderRadius: BorderRadius.circular(5.0),
           ),
         ),
       ),
-      onPressed: () => onPressed,
+      onPressed:onPressed,
       child: Text(btnText,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: kWhite)),
+          style: const TextStyle(fontWeight: FontWeight.w600, color: kPrimaryColor)),
     );
   }
 }
@@ -72,7 +72,7 @@ class ElevatedButtonWidget extends StatelessWidget {
           ),
         ),
       ),
-      onPressed: () => onPressed,
+      onPressed:onPressed,
       child: Text(btnText,
           style: const TextStyle(fontWeight: FontWeight.w600, color: kWhite)),
     );

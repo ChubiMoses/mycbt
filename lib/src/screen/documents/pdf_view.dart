@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:mycbt/src/models/docs.dart';
 import 'package:mycbt/src/screen/conversation/doc_conversation.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
 import 'package:mycbt/src/screen/modal/earn_points_modal.dart';
@@ -81,10 +82,10 @@ class _PdfViewState extends State<PdfView> {
 
   @override
   Widget build(BuildContext context) {
-    // WidgetsBinding.instance!.addPostFrameCallback((_) async {
-    //   //disable screenshot
-    //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-    // });
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      //disable screenshot
+      await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    });
     return WillPopScope(
         onWillPop: () async {
           updateLastSeen();

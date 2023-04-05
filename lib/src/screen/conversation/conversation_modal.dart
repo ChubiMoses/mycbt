@@ -5,10 +5,12 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:katex_flutter/katex_flutter.dart';
 import 'package:mycbt/src/models/quiz.dart';
 import 'package:mycbt/src/models/user.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/services/ads_service.dart';
 import 'package:mycbt/src/services/network%20_checker.dart';
 import 'package:mycbt/src/services/notify.dart';
+import 'package:mycbt/src/services/responsive_helper.dart';
 import 'package:mycbt/src/utils/firebase_collections.dart';
 import 'package:mycbt/src/screen/conversation/conversation_tile.dart';
 import 'package:mycbt/src/screen/profile/profile_image.dart';
@@ -104,7 +106,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> {
 
     if (widget.view != "Notification") {
       if (widget.answer != answer) {
-        SnackBar snackBar = SnackBar(
+        SnackBar snackBar = const SnackBar(
             content: Text('Question updated... please update questions.'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
@@ -115,19 +117,24 @@ class _ModalInsideModalState extends State<ModalInsideModal> {
 
   @override
   void initState() {
-    _bannerAd = BannerAd(
-        size: AdSize.mediumRectangle,
-        adUnitId: AdHelper.bannerAdUnitId,
-        listener: BannerAdListener(onAdLoaded: (_) {
-          setState(() {
-            adReady = true;
-          });
-        }, onAdFailedToLoad: (ad, LoadAdError error) {
-          adReady = false;
-          ad.dispose();
-        }),
-        request: AdRequest())
-      ..load();
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          if (ResponsiveHelper.isMobile(context)) {
+      _bannerAd = BannerAd(
+          size: AdSize.mediumRectangle,
+          adUnitId: AdHelper.bannerAdUnitId,
+          listener: BannerAdListener(onAdLoaded: (_) {
+            setState(() {
+              adReady = true;
+            });
+          }, onAdFailedToLoad: (ad, LoadAdError error) {
+            adReady = false;
+            ad.dispose();
+          }),
+          request: const AdRequest())
+        ..load();
+          }
+  
+        });
 
     networkChecker(context, "No internet connection");
     getQuestionDetails();
@@ -221,10 +228,11 @@ class _ModalInsideModalState extends State<ModalInsideModal> {
           ? loader()
           : SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
+             padding: EdgeInsets.symmetric(horizontal:ResponsiveHelper.isDesktop(context) ? 400 : ResponsiveHelper.isMobile(context) ? 0 : 35, vertical: ResponsiveHelper.isDesktop(context) ? 20 : 5.0),
               child: GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 child: Material(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),
                     ),
@@ -243,7 +251,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> {
                                     KaTeX(
                                         laTeXCode: Text(question,
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 color: kBlack400,
                                                 fontSize: 15))),
@@ -252,7 +260,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Answer: ",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -301,9 +309,9 @@ class _ModalInsideModalState extends State<ModalInsideModal> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(width: 5.0),
+              const SizedBox(width: 5.0),
               IconButton(
-                icon: Icon(
+                icon: const Icon(
                   CupertinoIcons.smiley,
                   color: kGrey500,
                 ),
@@ -316,13 +324,13 @@ class _ModalInsideModalState extends State<ModalInsideModal> {
               Expanded(
                 child: TextField(
                     style:
-                        TextStyle(color: kBlack, fontWeight: FontWeight.w500),
+                        const TextStyle(color: kBlack, fontWeight: FontWeight.w500),
                     maxLines: 5,
                     controller: controller,
                     autofocus: false,
                     textCapitalization: TextCapitalization.sentences,
                     onChanged: (value) {},
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'What\'s your answer?',
                       border: InputBorder.none,
                     )),
@@ -416,7 +424,7 @@ class _ModalInsideModalState extends State<ModalInsideModal> {
               child: Text("Gone through the question; what's your own answer?.",
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyText1)),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
         ],

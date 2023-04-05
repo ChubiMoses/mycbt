@@ -227,7 +227,7 @@ class _SelectSchoolAndCourseState extends State<SelectSchool> {
                                                         .width -
                                                     50,
                                                 height: 45,
-                                                child: Center(
+                                                child: const Center(
                                                     child: Text("Continue",
                                                         style: TextStyle(
                                                             color: Colors.white,
@@ -248,7 +248,7 @@ class _SelectSchoolAndCourseState extends State<SelectSchool> {
                                                   fontWeight: FontWeight.bold))
                                           : Row(
                                               children: [
-                                                Text("School name not found?",
+                                                const Text("School name not found?",
                                                     style: TextStyle(
                                                         fontSize: 15.0,
                                                         fontWeight:

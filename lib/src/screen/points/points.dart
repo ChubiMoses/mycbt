@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
 import 'package:mycbt/src/screen/points/share_points.dart';
 import 'package:mycbt/src/utils/colors.dart';
@@ -19,6 +19,8 @@ class PointScreen extends StatelessWidget {
           'You can earn points by: \n1. Uploading your study materials(lecture    notes, past exams, practical solution, projects...),\n2. watching free video, \n3. Answering questions,  \n4. Inviting friends and \n5. Daily login.',
     },
   ];
+
+  PointScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +46,10 @@ class PointScreen extends StatelessWidget {
                         style: TextStyle(color: kWhite, fontSize: 25)),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 GestureDetector(
@@ -58,7 +60,7 @@ class PointScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                LoginRegisterPage()));
+                                const LoginRegisterPage()));
                      
                   }else{Navigator.push(context,
                       MaterialPageRoute(builder: (context) => SharePoints()));

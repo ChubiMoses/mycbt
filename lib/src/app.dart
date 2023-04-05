@@ -3,7 +3,9 @@ import 'package:mycbt/src/screen/welcome/mapping.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:mycbt/src/services/scroll_service.dart';
 import 'package:mycbt/src/utils/colors.dart';
+import 'package:material_color_generator/material_color_generator.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -17,9 +19,9 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    //  const styleInformation = BigPictureStyleInformation(
-    //     FilePathAndroidBitmap(""),
-    //     largeIcon: FilePathAndroidBitmap(""));
+     const styleInformation = BigPictureStyleInformation(
+        FilePathAndroidBitmap(""),
+        largeIcon: FilePathAndroidBitmap(""));
 
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -34,9 +36,10 @@ class _MyAppState extends State<MyApp> {
               android: AndroidNotificationDetails(
                 channel.id,
                 channel.name,
+                channel.description,
                 color: kPrimaryColor,
                 playSound: true,
-               // styleInformation: styleInformation,
+                styleInformation: styleInformation,
                 icon: '@drawable/ic_logo',
               ),
             ));
@@ -48,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        scrollBehavior: MyCustomScrollBehavior(),
       debugShowCheckedModeBanner: false,
       title: 'My CBT',
       theme: themeData(),
@@ -58,8 +62,8 @@ class _MyAppState extends State<MyApp> {
   ThemeData themeData() {
     return ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.green,
-        primarySwatch: Colors.green,
+        primaryColor: generateMaterialColor(color: const Color(0xFF05A95C)),
+        primarySwatch:generateMaterialColor(color: const Color(0xFF05A95C)),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: "OpenSans",
         textTheme: const TextTheme(

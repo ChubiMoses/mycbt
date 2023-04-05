@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mycbt/src/models/question.dart';
 import 'package:mycbt/src/models/user.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/messages/chart_screen.dart';
 import 'package:mycbt/src/screen/question/photo_preview.dart';
 import 'package:mycbt/src/screen/question/questions_tile.dart';
+import 'package:mycbt/src/screen/question/report.dart';
 import 'package:mycbt/src/services/user_online_checker.dart';
 import 'package:mycbt/src/utils/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -70,6 +72,23 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0.0,
+        actions: [
+          PopupMenuButton<String>(
+                itemBuilder: (_) {
+                  return const [
+                    PopupMenuItem<String>(value: "1", child: Text("Block")),
+                    PopupMenuItem<String>(value: "2", child: Text("Report")),
+                  ];
+                },
+                icon: const Icon(Icons.more_vert),
+                onSelected: (i) {
+               
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ReportScreen(postId: "", ownerId: user!.id, view: "Profile")));
+                
+                },
+              ),
+            
+        ],
       ),
       body: user == null
           ? loader()

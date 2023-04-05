@@ -2,11 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:mycbt/src/screen/about.dart';
 import 'package:mycbt/src/screen/admin/admin_login.dart';
 import 'package:mycbt/src/screen/faq.dart';
-import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:mycbt/src/screen/home_tab.dart';
 import 'package:mycbt/src/screen/testimonial/testimonials.dart';
 import 'package:mycbt/src/screen/welcome/loginRegisterPage.dart';
-import 'package:mycbt/src/screen/home_top_tabs.dart';
 import 'package:mycbt/src/screen/points/points.dart';
 import 'package:mycbt/src/screen/profile/profile.dart';
 import 'package:mycbt/src/screen/subscription/subscription_screen.dart';
@@ -79,7 +78,7 @@ class _MenuScreenState extends State<DrawerWidget> {
                           currentUser == null
                               ? "Hello Stranger"
                               : currentUser!.username,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: kWhite,
                               fontSize: 14,
                               fontWeight: FontWeight.bold)),
@@ -87,18 +86,17 @@ class _MenuScreenState extends State<DrawerWidget> {
                         height: 5.0,
                       ),
                       currentUser == null
-                          ? SizedBox.shrink()
+                          ? const SizedBox.shrink()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(CupertinoIcons.mail,
-                                    size: 18.0, color: kWhite),
+
                                 Text(" " + currentUser!.email.toString(),
                                     style: TextStyle(color: kWhite)),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5.0,
                                 ),
-                                Text(
+                                const Text(
                                   "|",
                                   style: TextStyle(color: kWhite),
                                 ),
@@ -139,7 +137,7 @@ class _MenuScreenState extends State<DrawerWidget> {
                           },
                           child: ListTile(
                             leading: Icon(CupertinoIcons.person),
-                            title: Text("Account Settings",
+                            title: Text("My Account",
                                 style: TextStyle(fontWeight: FontWeight.w600)),
                           ),
                         ),
@@ -189,7 +187,7 @@ class _MenuScreenState extends State<DrawerWidget> {
                       onTap: () {
                         launchURL(snippet?.whatsapp);
                       },
-                      child: ListTile(
+                      child: const ListTile(
                         leading: CircleAvatar(
                           radius: 10,
                           backgroundImage:
@@ -203,7 +201,7 @@ class _MenuScreenState extends State<DrawerWidget> {
                         launchURL("https://www.facebook.com/mycbt1/");
                       },
                       child: ListTile(
-                        leading: CircleAvatar(
+                        leading: const CircleAvatar(
                           radius: 10,
                           backgroundImage:
                               AssetImage("assets/images/facebook.png"),
@@ -218,7 +216,7 @@ class _MenuScreenState extends State<DrawerWidget> {
                                 TestimonialScreen("")));
                       },
                       child: ListTile(
-                        leading: Icon(Icons.rate_review),
+                        leading: const Icon(Icons.rate_review),
                         title: Text("Testimonials",
                             style: Theme.of(context).textTheme.bodyText1),
                       )),
@@ -255,11 +253,11 @@ class _MenuScreenState extends State<DrawerWidget> {
                         title: Text("About",
                             style: Theme.of(context).textTheme.bodyText1),
                       )),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   currentUser == null
-                      ? SizedBox.shrink()
+                      ? const SizedBox.shrink()
                       : currentUser?.email == "mycbt@gmail.com"
                           ? TextButton(
                                style: ButtonStyle(
@@ -280,7 +278,7 @@ class _MenuScreenState extends State<DrawerWidget> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => AdminLogin())),
-                              child: Text("Admin"),
+                              child: const Text("Admin"),
                              )
                           : SizedBox.shrink(),
                   Container(

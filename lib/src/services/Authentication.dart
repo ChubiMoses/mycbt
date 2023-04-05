@@ -43,7 +43,7 @@ class Auth implements AuthImplementation{
     // bool isGoogle = await  _googleSignIn.isSignedIn();
 
     //  if(isGoogle){
-    //    _googleSignIn.signOut();
+    //    _googleSignIn.signOut();s
     //  }
      
      //log user out
